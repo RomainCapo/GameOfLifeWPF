@@ -6,14 +6,47 @@
         xmlns:local="clr-namespace:GameOfLife"
         mc:Ignorable="d"
         WindowState="Maximized"
-        Title="Game of Life">
+        Title="Game of Life"
+        Background="Black">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="8*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="15*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Rectangle Grid.Row="0" Stroke="White" Margin="5,5,5,5"></Rectangle>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30*"/>
+            </Grid.ColumnDefinitions>
+
+            <Image Source="/images/play.png" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Margin="2"></Image>
+            <Image Source="/images/pause.png" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Margin="2"></Image>
+            <Image Source="/images/stop.png" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Margin="2"></Image>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="20*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Foreground="White" Content="Time"/>
+            <Slider Grid.Row="0" Grid.Column="1" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="100" Maximum="5000" Value="{Binding ElementName=txtSliderTime, Path=Text}" />
+            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="txtSliderTime" VerticalAlignment="Center" Foreground="White" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
     </Grid>
 </Window>
