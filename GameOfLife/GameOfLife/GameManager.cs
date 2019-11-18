@@ -3,29 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace GameOfLife
 {
     class GameManager
     {
-        private int width;
-        private int height;
-        
-        public GameManager(int height, int width)
+        public Board Board { get; }
+        public bool IsGameRunning { get; set; }
+        public GameManager(int x, int y)
         {
-            this.height = height;
-            this.width = width;
-        }
-        public int Width
-        {
-            get { return this.width; }
-            set { this.width = value; }
+            Board = new Board(x, y);
+            Board.AleaInit();
+            IsGameRunning = false;
         }
 
-        public int Height
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Play()
         {
-            get { return this.height; }
-            set { this.height = value; }
+            while (IsGameRunning)
+            {
+                Board.NextIteration();
+                System.Threading.Thread.Sleep(1000);
+            }
         }
     }
+
 }

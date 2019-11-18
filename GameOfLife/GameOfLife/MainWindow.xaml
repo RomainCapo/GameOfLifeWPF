@@ -15,12 +15,8 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" x:Name="BoardGrid">
 
-            <Rectangle Grid.Row="0" Stroke="White" Margin="5,5,5,5"></Rectangle>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -28,12 +24,16 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="30*"/>
+                <ColumnDefinition Width="10*"/>
             </Grid.ColumnDefinitions>
 
-            <Image Source="/images/play.png" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Margin="2"></Image>
+            <Button Grid.Column="0" Content="Play" Click="ButtonPlayClick"/>
+            <Button Grid.Column="1" Content="Pause" Click="ButtonPauseClick"/>
+            <Button Grid.Column="2" Content="Stop"  Click="ButtonStopClick"/>
+
+            <!--<Image Source="/images/play.png" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Margin="2"></Image>
             <Image Source="/images/pause.png" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Margin="2"></Image>
-            <Image Source="/images/stop.png" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Margin="2"></Image>
+            <Image Source="/images/stop.png" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Margin="2"></Image>-->
         </Grid>
 
         <Grid Grid.Row="2">
