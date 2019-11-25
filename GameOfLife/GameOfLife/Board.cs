@@ -61,10 +61,12 @@ namespace GameOfLife
         /// </summary>
         public void AleaInit()
         {
-            int initLoop = rand.Next(40, 50);
-            for (int i = 0; i < initLoop; i++)
+            for(int i = 0; i < NbCellX; i++)
             {
-                board[rand.Next(0, NbCellX - 1), rand.Next(0, NbCellY - 1)].IsAlive = true;
+                for(int j = 0; j < rand.Next(0, NbCellY); j++)
+                {
+                    board[i, rand.Next(0, NbCellY)].IsAlive = true;
+                }
             }
         }
 

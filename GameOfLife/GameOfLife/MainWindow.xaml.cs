@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,24 +47,27 @@ namespace GameOfLife
             {
                 for(int j = 0; j < b.NbCellY; j++)
                 {
-                    BoardGrid.Children.Add(b[i,j]);
-                    Grid.SetColumn(b[i,j], i);
-                    Grid.SetRow(b[i,j], j);
+                    Button cell = new Button();
+                    Binding binding = new Binding("CellColor");
+                    binding.Source = b[i, j];
+                    cell.SetBinding(Button.BackgroundProperty, binding);
+
+                    BoardGrid.Children.Add(cell);
+                    Grid.SetColumn(cell, i);
+                    Grid.SetRow(cell, j);
                 }
             }
         }
 
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
-            /*gm.IsGameRunning = true;
-            gm.Play();*/
-            MessageBox.Show("Play!");
+            gm.IsGameRunning = true;
+            gm.Play();
         }
 
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
         {
-            //gm.IsGameRunning = false;
-            MessageBox.Show("Pause!");
+            gm.Pause();
         }
 
         public void ButtonStopClick(object sender, RoutedEventArgs e)

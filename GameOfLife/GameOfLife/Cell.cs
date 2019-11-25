@@ -1,39 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace GameOfLife
 {
-    class Cell:Button
+    class Cell : INotifyPropertyChanged
     {
+        public SolidColorBrush CellColor { get; private set; }
+
         private bool isAlive;
-        public bool IsAlive { 
+        public bool IsAlive
+        {
             get
             {
                 return isAlive;
             }
             set
             {
-                if (value)
+                isAlive = value;
+                if (isAlive)
                 {
-                    isAlive = value;
-                    this.Background = Brushes.White;
+                    CellColor = Brushes.White;
                 }
                 else
                 {
-                    isAlive = value;
-                    this.Background = Brushes.Black;
-                }
+                    CellColor = Brushes.Black;
+                }   
+                OnPropertyChanged("CellColor");
             }
         }
 
-        public Cell():base()
+        public Cell()
         {
-            IsAlive = false;
+            isAlive = false;
         }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string info)
+        {
+            
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
+
     }
 }
