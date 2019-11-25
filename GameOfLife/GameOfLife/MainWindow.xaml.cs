@@ -54,18 +54,50 @@ namespace GameOfLife
 
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
-            gm.IsGameRunning = true;
-            gm.Play();
+            /*gm.IsGameRunning = true;
+            gm.Play();*/
+            MessageBox.Show("Play!");
         }
 
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
         {
-            gm.IsGameRunning = false;
+            //gm.IsGameRunning = false;
+            MessageBox.Show("Pause!");
         }
 
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("Stop!");
+        }
 
+        /// <summary>
+        /// Edit time value when slider emit an ValueChanged
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void SliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            MessageBox.Show("Value changed!");
+        }
+
+        /// <summary>
+        /// Edit grid and give the possibility to user to edit the board manually
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CustomizedRadioButton(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Customize board!");
+        }
+
+        /// <summary>
+        /// Edit the board by reload a random grid
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void RandomRadioButton(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Random board!");
         }
     }
 }
