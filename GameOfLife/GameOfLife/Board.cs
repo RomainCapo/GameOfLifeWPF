@@ -106,20 +106,23 @@ namespace GameOfLife
                 for(int j = 0; j < NbCellY; j++)
                 {
                     int nbNeighbours = ComputeCellXYNeighbours(i, j);
-                    if(nbNeighbours < 2)
+                    if (board[i, j].IsAlive)
                     {
-                        board[i, j].IsAlive = false;
-                    }
-
-                    if(nbNeighbours > 3)
-                    {
-                        if (!board[i, j].IsAlive)
-                        {
-                            board[i, j].IsAlive = true;
-                        }
-                        else
+                        if(nbNeighbours < 2 )
                         {
                             board[i, j].IsAlive = false;
+                        }
+
+                        if(nbNeighbours > 3)
+                        {
+                            board[i, j].IsAlive = false;
+                        }
+                    }
+                    else
+                    {
+                        if(nbNeighbours == 3)
+                        {
+                            board[i, j].IsAlive = true;
                         }
                     }
                 }
