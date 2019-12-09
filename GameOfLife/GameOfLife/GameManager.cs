@@ -44,6 +44,16 @@ namespace GameOfLife
         {
 
         }
+
+        public void AleaInit()
+        {
+            Board.AleaInit();
+        }
+
+        public void Clear() 
+        {
+            Board.Clear();
+        }
     }
 
 }

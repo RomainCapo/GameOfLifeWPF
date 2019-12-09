@@ -42,6 +42,17 @@ namespace GameOfLife
             set { board[x, y] = value; }
         }
 
+        public void Clear()
+        {
+            for(int i = 0; i < NbCellX; i++)
+            {
+                for(int j = 0; j < NbCellY; j++)
+                {
+                    board[i, j].IsAlive = false;
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

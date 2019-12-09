@@ -20,12 +20,7 @@ namespace GameOfLife
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
-    /// Options :
-    /// Réglage interactif de la vitesse ainsi que des dimensions de la simulation
-    /// Option de pause/Play et Réinitialisation de la simulation
-    /// Etat de départ aléatoire ou au choix de l'utilisateur
-    /// Chargement/Sauvegarde d'un état de la simulation
-    /// Affichage de statistiques de la simulation(population actuelle, itération, population min/max, age de la plus ancienne cellule, pyramide des ages des cellules, ...)
+    /// TODO : rempalcer les if(gm!=null) par operateur !! ou ?
 
 
     /// </summary>
@@ -69,15 +64,24 @@ namespace GameOfLife
                 for(int j = 0; j < b.NbCellY; j++)
                 {
                     Button cell = new Button();
-                    Binding binding = new Binding("CellColor");
-                    binding.Source = b[i, j];
-                    cell.SetBinding(Button.BackgroundProperty, binding);
+
+                    Binding bindingCellColor = new Binding("CellColor");
+                    bindingCellColor.Source = b[i, j];
+                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
+
+                    cell.Click += new RoutedEventHandler(Cell_Click);
 
                     BoardGrid.Children.Add(cell);
                     Grid.SetColumn(cell, i);
                     Grid.SetRow(cell, j);
                 }
             }
+        }
+
+        public void Cell_Click(object sender, RoutedEventArgs e)
+        {
+            Button currentCell = sender as Button;
+            gm.Board[Grid.GetColumn(currentCell), Grid.GetRow(currentCell)].IsAlive = true;
         }
 
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
@@ -103,7 +107,7 @@ namespace GameOfLife
         /// <param name="e"></param>
         public void SliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            MessageBox.Show("Value changed!");
+            
         }
 
         /// <summary>
@@ -113,7 +117,7 @@ namespace GameOfLife
         /// <param name="e"></param>
         public void CustomizedRadioButton(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Customize board!");
+            gm?.Clear();
         }
 
         /// <summary>
@@ -123,7 +127,7 @@ namespace GameOfLife
         /// <param name="e"></param>
         public void RandomRadioButton(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Random board!");
+            gm?.AleaInit();
         }
 
         public void SliderWidthValueChanged(object sender, DragCompletedEventArgs e)
