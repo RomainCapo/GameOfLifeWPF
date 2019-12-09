@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -19,6 +20,14 @@ namespace GameOfLife
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
+    /// Options :
+    /// Réglage interactif de la vitesse ainsi que des dimensions de la simulation
+    /// Option de pause/Play et Réinitialisation de la simulation
+    /// Etat de départ aléatoire ou au choix de l'utilisateur
+    /// Chargement/Sauvegarde d'un état de la simulation
+    /// Affichage de statistiques de la simulation(population actuelle, itération, population min/max, age de la plus ancienne cellule, pyramide des ages des cellules, ...)
+
+
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -27,13 +36,25 @@ namespace GameOfLife
         public MainWindow()
         {
             InitializeComponent();
-            gm = new GameManager(20, 10);
+            gm = new GameManager(10, 10);
             GenerateGrid();
         }
 
-        public void GenerateGrid()
+        private void UpdateGrid(int nbCellX, int nbCellY)
         {
+            gm.UpdateBoard(nbCellX, nbCellY);
+            GenerateGrid();
+        }
+
+        private void GenerateGrid()
+        {
+            Grid g = this.FindName("BoardGrid") as Grid;
+            g.Children.Clear();
+            g.RowDefinitions.Clear();
+            g.ColumnDefinitions.Clear();
+            
             Board b = gm.Board;
+
             for(int i = 0; i <b.NbCellX; i++)
             {
                 BoardGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -103,6 +124,23 @@ namespace GameOfLife
         public void RandomRadioButton(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Random board!");
+        }
+
+        public void SliderWidthValueChanged(object sender, DragCompletedEventArgs e)
+        {
+            if(gm != null)
+            {
+                this.UpdateGrid((int)((Slider)sender).Value, gm.Board.NbCellY);
+            }
+            
+        }
+
+        public void SliderHeightValueChanged(object sender, DragCompletedEventArgs e)
+        {
+            if(gm != null)
+            {
+                this.UpdateGrid(gm.Board.NbCellX, (int)((Slider)sender).Value);
+            }
         }
     }
 }

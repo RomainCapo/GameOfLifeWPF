@@ -99,28 +99,43 @@ namespace GameOfLife
             return nbNeighbours;
         }
 
+        private int[,] computeBoardNeighbours()
+        {
+            int[,] boardNeighboor = new int[NbCellX, NbCellY];
+            for (int i = 0; i < NbCellX; i++)
+            {
+                for (int j = 0; j < NbCellY; j++)
+                {
+                    boardNeighboor[i, j] = ComputeCellXYNeighbours(i, j);
+                }
+            }
+            return boardNeighboor;
+        }
+
         public void NextIteration()
         {
-            for(int i = 0; i < NbCellX; i++)
+            int[,] boardNeighbours = this.computeBoardNeighbours();
+
+            for (int i = 0; i < NbCellX; i++)
             {
-                for(int j = 0; j < NbCellY; j++)
+                for (int j = 0; j < NbCellY; j++)
                 {
-                    int nbNeighbours = ComputeCellXYNeighbours(i, j);
+                    int nbNeighbours = boardNeighbours[i, j];
                     if (board[i, j].IsAlive)
                     {
-                        if(nbNeighbours < 2 )
+                        if (nbNeighbours < 2)
                         {
                             board[i, j].IsAlive = false;
                         }
 
-                        if(nbNeighbours > 3)
+                        if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
                         }
                     }
                     else
                     {
-                        if(nbNeighbours == 3)
+                        if (nbNeighbours == 3)
                         {
                             board[i, j].IsAlive = true;
                         }

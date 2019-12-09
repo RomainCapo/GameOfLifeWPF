@@ -10,13 +10,18 @@ namespace GameOfLife
 {
     class GameManager
     {
-        public Board Board { get; }
+        public Board Board { get; set; }
         public bool IsGameRunning { get; set; }
         public GameManager(int x, int y)
         {
             Board = new Board(x, y);
             Board.AleaInit();
             IsGameRunning = false;
+        }
+
+        public void UpdateBoard(int nbCellX, int nbCellY)
+        {
+            Board = new Board(nbCellX, nbCellY);
         }
 
         private void ThreadMethod()
