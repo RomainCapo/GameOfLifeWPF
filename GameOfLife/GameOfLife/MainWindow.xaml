@@ -1,0 +1,94 @@
+﻿<Window x:Class="GameOfLife.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:local="clr-namespace:GameOfLife"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        Title="Game of Life"
+        Background="Black">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15*"></RowDefinition>
+            <RowDefinition Height="0.5*"></RowDefinition>
+            <RowDefinition Height="6*"></RowDefinition>
+            <RowDefinition Height="0.5*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" x:Name="BoardGrid">
+
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"/> <!-- Time label -->
+                <ColumnDefinition Width="4*"/> <!-- Slider -->
+                <ColumnDefinition Width="1.5*"/> <!-- Value label -->
+                <ColumnDefinition Width="4*"/> <!-- Radio Button -->
+                <ColumnDefinition Width="2*"/> <!-- Sliders -->
+                <ColumnDefinition Width="1*"/> <!-- Sliders values -->
+                <ColumnDefinition Width="15*"/> <!-- GRAPH -->
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+
+            <Button Name="StartButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Play" Click="ButtonPlayClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5 0 0 0" Width="40" Height="40">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="/images/play.png"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Name="PauseButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Pause" Click="ButtonPauseClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="55 0 0 0" Width="40" Height="40">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="/images/pause.png"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Name="StopButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Stop" Click="ButtonStopClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105 0 0 0" Width="40" Height="40">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="/images/stop.png"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="White" Content="Time" FontSize="15"/>
+            <Slider Grid.Row="1" Grid.Column="1" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Bottom" Minimum="100" Maximum="5000" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
+            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txtSliderTime" VerticalAlignment="Bottom" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="3">
+                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                    <RadioButton Grid.Row="0" Grid.Column="4" x:Name="RadioButtonRandom" GroupName="grid" FontSize="15" Foreground="White" VerticalAlignment="Center" IsChecked="True" Checked="RandomRadioButton">Random grid</RadioButton>
+                    <RadioButton Grid.Row="0" Grid.Column="5" x:Name="RadioButtonCustomized" GroupName="grid" FontSize="15" Foreground="White" VerticalAlignment="Center" Checked="CustomizedRadioButton">Customized grid</RadioButton>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="4">
+                <StackPanel VerticalAlignment="Bottom">
+                    <Slider x:Name="SliderWidth" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="5" Maximum="100" Value="{Binding ElementName=txtSliderWidth, Path=Text}"/>
+                    <Slider x:Name="SliderHeight" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="5" Maximum="100" Value="{Binding ElementName=txtSliderHeight, Path=Text}"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="5">
+                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                    <TextBlock x:Name="txtSliderWidth" VerticalAlignment="Center" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderWidth, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock x:Name="txtSliderHeight" VerticalAlignment="Center" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderHeight, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </Border>
+
+            <lvc:CartesianChart Series="{Binding SeriesCollection}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="2"/>
+        </Grid>
+    </Grid>
+</Window>
