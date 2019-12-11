@@ -76,8 +76,8 @@
 
             <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="4">
                 <StackPanel VerticalAlignment="Bottom">
-                    <Slider x:Name="SliderWidth" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="5" Maximum="100" Value="{Binding ElementName=txtSliderWidth, Path=Text}"/>
-                    <Slider x:Name="SliderHeight" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="5" Maximum="100" Value="{Binding ElementName=txtSliderHeight, Path=Text}"/>
+                    <Slider x:Name="SliderWidth" TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="10" Maximum="100" Value="{Binding ElementName=txtSliderWidth, Path=Text}" Thumb.DragCompleted="SliderWidthValueChanged" />
+                    <Slider x:Name="SliderHeight" TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="10" Maximum="100" Value="{Binding ElementName=txtSliderHeight, Path=Text}" Thumb.DragCompleted="SliderHeightValueChanged" />
                 </StackPanel>
             </Border>
 

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -36,26 +37,41 @@ namespace GameOfLife
             GenerateGrid();
         }
 
-        public void GenerateGrid()
+        private void UpdateGrid(int nbCellX, int nbCellY)
         {
+            gm.UpdateBoard(nbCellX, nbCellY);
+            GenerateGrid();
+        }
+
+        private void GenerateGrid()
+        {
+            Grid g = this.FindName("BoardGrid") as Grid;
+            g.Children.Clear();
+            g.RowDefinitions.Clear();
+            g.ColumnDefinitions.Clear();
+
             Board b = gm.Board;
-            for(int i = 0; i <b.NbCellX; i++)
+
+            for (int i = 0; i < b.NbCellX; i++)
             {
                 BoardGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
-            for(int j = 0; j < b.NbCellY; j++)
+            for (int j = 0; j < b.NbCellY; j++)
             {
                 BoardGrid.RowDefinitions.Add(new RowDefinition());
             }
 
-            for(int i = 0; i < b.NbCellX; i++)
+            for (int i = 0; i < b.NbCellX; i++)
             {
-                for(int j = 0; j < b.NbCellY; j++)
+                for (int j = 0; j < b.NbCellY; j++)
                 {
                     Button cell = new Button();
-                    Binding binding = new Binding("CellColor");
-                    binding.Source = b[i, j];
-                    cell.SetBinding(Button.BackgroundProperty, binding);
+
+                    Binding bindingCellColor = new Binding("CellColor");
+                    bindingCellColor.Source = b[i, j];
+                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
+
+                    cell.Click += new RoutedEventHandler(Cell_Click);
 
                     BoardGrid.Children.Add(cell);
                     Grid.SetColumn(cell, i);
@@ -81,6 +97,11 @@ namespace GameOfLife
 
             gm.IsGameRunning = true;
             gm.Play();           
+        }
+        public void Cell_Click(object sender, RoutedEventArgs e)
+        {
+            Button currentCell = sender as Button;
+            gm.Board[Grid.GetColumn(currentCell), Grid.GetRow(currentCell)].IsAlive = !gm.Board[Grid.GetColumn(currentCell), Grid.GetRow(currentCell)].IsAlive;
         }
 
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
@@ -113,7 +134,7 @@ namespace GameOfLife
         /// <param name="e"></param>
         public void CustomizedRadioButton(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Customize board!");
+            gm?.Clear();
         }
 
         /// <summary>
@@ -123,7 +144,24 @@ namespace GameOfLife
         /// <param name="e"></param>
         public void RandomRadioButton(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Random board!");
+            gm?.AleaInit();
+        }
+
+        public void SliderWidthValueChanged(object sender, DragCompletedEventArgs e)
+        {
+            if (gm != null)
+            {
+                this.UpdateGrid((int)((Slider)sender).Value, gm.Board.NbCellY);
+            }
+
+        }
+
+        public void SliderHeightValueChanged(object sender, DragCompletedEventArgs e)
+        {
+            if (gm != null)
+            {
+                this.UpdateGrid(gm.Board.NbCellX, (int)((Slider)sender).Value);
+            }
         }
     }
 }

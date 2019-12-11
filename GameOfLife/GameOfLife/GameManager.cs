@@ -10,7 +10,7 @@ namespace GameOfLife
 {
     class GameManager
     {
-        public Board Board { get; }
+        public Board Board { get; set; }
         public bool IsGameRunning { get; set; }
         public int Time { get; set; }
 
@@ -26,6 +26,10 @@ namespace GameOfLife
             Board.AleaInit();
             IsGameRunning = false;
             Time = 100;
+        }
+        public void UpdateBoard(int nbCellX, int nbCellY)
+        {
+            Board = new Board(nbCellX, nbCellY);
         }
 
         private void ThreadMethod()
@@ -69,6 +73,14 @@ namespace GameOfLife
             _shutdownEvent.Set();
             _pauseEvent.Set();
             thread.Join();
+        }
+        public void AleaInit()
+        {
+            Board.AleaInit();
+        }
+        public void Clear()
+        {
+            Board.Clear();
         }
     }
 
