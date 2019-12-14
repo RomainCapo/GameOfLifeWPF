@@ -17,10 +17,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LiveCharts;
 using LiveCharts.Wpf;
+using Microsoft.Win32;
+using Xceed.Wpf.Toolkit;
 
 namespace GameOfLife
 {
     /// <summary>
+    /// Réglage interactif de la vitesse ainsi que des dimensions de la simulation
+    /// Option de pause/Play et Réinitialisation de la simulation
+    /// Etat de départ aléatoire ou au choix de l'utilisateur
+    /// Affichage d'un graphe avec la population (nombre de celllules) selon l'itération
+    /// Chargement/Sauvegarde d'un état de la simulation
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
@@ -34,63 +41,28 @@ namespace GameOfLife
         {
             InitializeComponent();
             gm = new GameManager(20, 10);
-            GenerateGrid();
+            gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
         }
 
         private void UpdateGrid(int nbCellX, int nbCellY)
         {
             gm.UpdateBoard(nbCellX, nbCellY);
-            GenerateGrid();
+            gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
         }
 
-        private void GenerateGrid()
+        
+
+        private void EnableInterface(bool isEnabled)
         {
-            Grid g = this.FindName("BoardGrid") as Grid;
-            g.Children.Clear();
-            g.RowDefinitions.Clear();
-            g.ColumnDefinitions.Clear();
-
-            Board b = gm.Board;
-
-            for (int i = 0; i < b.NbCellX; i++)
-            {
-                BoardGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            }
-            for (int j = 0; j < b.NbCellY; j++)
-            {
-                BoardGrid.RowDefinitions.Add(new RowDefinition());
-            }
-
-            for (int i = 0; i < b.NbCellX; i++)
-            {
-                for (int j = 0; j < b.NbCellY; j++)
-                {
-                    Button cell = new Button();
-
-                    Binding bindingCellColor = new Binding("CellColor");
-                    bindingCellColor.Source = b[i, j];
-                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
-
-                    cell.Click += new RoutedEventHandler(Cell_Click);
-
-                    BoardGrid.Children.Add(cell);
-                    Grid.SetColumn(cell, i);
-                    Grid.SetRow(cell, j);
-                }
-            }
-        }
-
-        private void EnableSliderDimensionAndRadioBoard(bool isEnabled)
-        {
-            (this.FindName("SliderWidth") as Slider).IsEnabled = isEnabled;
-            (this.FindName("SliderHeight") as Slider).IsEnabled = isEnabled;
-            (this.FindName("RadioButtonRandom") as RadioButton).IsEnabled = isEnabled;
-            (this.FindName("RadioButtonCustomized") as RadioButton).IsEnabled = isEnabled;
+            (this.FindName("IntegerUpDownWidth") as IntegerUpDown).IsEnabled = isEnabled;
+            (this.FindName("IntegerUpDownHeight") as IntegerUpDown).IsEnabled = isEnabled;
+            (this.FindName("ButtonRandom") as Button).IsEnabled = isEnabled;
+            (this.FindName("ButtonClear") as Button).IsEnabled = isEnabled;
         }
 
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
-            EnableSliderDimensionAndRadioBoard(false);
+            EnableInterface(false);
 
             SeriesCollection = new SeriesCollection
             {
@@ -107,25 +79,39 @@ namespace GameOfLife
             gm.IsGameRunning = true;
             gm.Play();           
         }
-        public void Cell_Click(object sender, RoutedEventArgs e)
-        {
-            Button currentCell = sender as Button;
-            int iCol = Grid.GetColumn(currentCell);
-            int iRow = Grid.GetRow(currentCell);
-            gm.Board[iCol, iRow].IsAlive = !gm.Board[iCol, iRow].IsAlive;
-        }
+        
 
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
         {
-            EnableSliderDimensionAndRadioBoard(true);
+            EnableInterface(true);
             gm.Pause();
         }
 
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
-            EnableSliderDimensionAndRadioBoard(true);
+            EnableInterface(true);
             gm.Pause();
-            gm.Clear();
+            gm.Board.Clear();
+        }
+
+        public void ButtonSaveClick(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog
+            {
+                FileName = "BoardState",
+                DefaultExt = ".gol",
+                Filter ="Board state file (.gol)|*.gol"
+            };
+            
+            if(dlg.ShowDialog() == true)
+            {
+                //gm.SaveBoard(dlg.FileName);
+            }
+        }
+
+        public void ButtonRestoreClick(object sender, RoutedEventArgs e)
+        {
+            gm.RestoreBoard(BoardGrid);
         }
 
         /// <summary>
@@ -141,42 +127,39 @@ namespace GameOfLife
             }
         }
 
-        /// <summary>
-        /// Edit grid and give the possibility to user to edit the board manually
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void CustomizedRadioButton(object sender, RoutedEventArgs e)
+        public void ButtonClearClick(object sender, RoutedEventArgs e)
         {
-            gm?.Clear();
+            gm?.Board.Clear();
         }
 
-        /// <summary>
-        /// Edit the board by reload a random grid
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void RandomRadioButton(object sender, RoutedEventArgs e)
+
+        public void ButtonRandomClick(object sender, RoutedEventArgs e)
         {
-            gm?.AleaInit();
+            gm?.Board.Clear();
+            gm?.Board.AleaInit();
         }
 
-        public void SliderWidthValueChanged(object sender, DragCompletedEventArgs e)
+        public void IntegerUpDownWidthValueChanged(object sender, RoutedEventArgs e)
         {
             if (gm != null)
             {
-                this.UpdateGrid((int)((Slider)sender).Value, gm.Board.NbCellY);
+                this.UpdateGrid((int)((IntegerUpDown)sender).Value, gm.Board.NbCellY);
+                gm.Board.AleaInit();
             }
-            gm.AleaInit();
         }
 
-        public void SliderHeightValueChanged(object sender, DragCompletedEventArgs e)
+        public void IntegerUpDownHeightValueChanged(object sender, RoutedEventArgs e)
         {
             if (gm != null)
             {
-                this.UpdateGrid(gm.Board.NbCellX, (int)((Slider)sender).Value);
+                this.UpdateGrid(gm.Board.NbCellX, (int)((IntegerUpDown)sender).Value);
+                gm.Board.AleaInit();
             }
-            gm.AleaInit();
+        }
+
+        private void WindowClosing(object sender, CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

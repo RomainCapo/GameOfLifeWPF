@@ -10,6 +10,7 @@ using System.Windows.Media;
 
 namespace GameOfLife
 {
+    [Serializable]
     class Cell : INotifyPropertyChanged
     {
         public SolidColorBrush CellColor { get; private set; }

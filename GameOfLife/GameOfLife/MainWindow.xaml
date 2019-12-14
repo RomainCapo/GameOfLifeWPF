@@ -4,11 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:local="clr-namespace:GameOfLife"
         mc:Ignorable="d"
         WindowState="Maximized"
         Title="Game of Life"
-        Background="Black">
+        Background="Black" 
+        Closing="WindowClosing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="15*"></RowDefinition>
@@ -69,26 +71,23 @@
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
             BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="3">
                 <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <RadioButton Grid.Row="0" Grid.Column="4" x:Name="RadioButtonRandom" GroupName="grid" FontSize="15" Foreground="White" VerticalAlignment="Center" IsChecked="True" Checked="RandomRadioButton">Random grid</RadioButton>
-                    <RadioButton Grid.Row="0" Grid.Column="5" x:Name="RadioButtonCustomized" GroupName="grid" FontSize="15" Foreground="White" VerticalAlignment="Center" Checked="CustomizedRadioButton">Customized grid</RadioButton>
-                </StackPanel>
+                    <Button Grid.Row="0" Grid.Column="4" x:Name="ButtonRandom"  FontSize="15" Foreground="Black" Background="White" VerticalAlignment="Center" Click="ButtonRandomClick">Random initialisation</Button>
+                    <Button Grid.Row="0" Grid.Column="5" x:Name="ButtonClear"  FontSize="15" Foreground="Black" Background="White" VerticalAlignment="Center" Click="ButtonClearClick">Clear board</Button>
+                 </StackPanel>
             </Border>
 
             <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="4">
                 <StackPanel VerticalAlignment="Bottom">
-                    <Slider x:Name="SliderWidth" TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="10" Maximum="100" Value="{Binding ElementName=txtSliderWidth, Path=Text}" Thumb.DragCompleted="SliderWidthValueChanged" />
-                    <Slider x:Name="SliderHeight" TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" Minimum="10" Maximum="100" Value="{Binding ElementName=txtSliderHeight, Path=Text}" Thumb.DragCompleted="SliderHeightValueChanged" />
+                    <xctk:IntegerUpDown x:Name="IntegerUpDownWidth" Value="10" Maximum="100" Minimum="10" ValueChanged="IntegerUpDownWidthValueChanged"/>
+                    <xctk:IntegerUpDown x:Name="IntegerUpDownHeight" Value="10" Maximum="100" Minimum="10" ValueChanged="IntegerUpDownHeightValueChanged"/>
+                    <Button x:Name="ButtonSave" FontSize="15" Foreground="Black" Background="White" Click="ButtonSaveClick">Save board state</Button>
+                    <Button x:Name="ButtonRestore" FontSize="15" Foreground="Black" Background="White" Click="ButtonRestoreClick">Restore board state</Button>
                 </StackPanel>
             </Border>
 
-            <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="5">
-                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <TextBlock x:Name="txtSliderWidth" VerticalAlignment="Center" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderWidth, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock x:Name="txtSliderHeight" VerticalAlignment="Center" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderHeight, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-            </Border>
 
             <lvc:CartesianChart Series="{Binding SeriesCollection}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="2"/>
         </Grid>
+        
     </Grid>
 </Window>

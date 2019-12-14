@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace GameOfLife
 {
+    [Serializable]
     class Board
     {
+        
         Cell[,] board;
-        public int NbCellX { get; }
-        public int NbCellY { get; }
+        public int NbCellX { get; set; }//todo
+        public int NbCellY { get; set; }//todo
 
         Random rand = new Random();
 
@@ -28,6 +32,35 @@ namespace GameOfLife
             NbCellY = nbCellY;
             board = new Cell[NbCellX, NbCellY];
             InitBoard();
+        }
+
+        public int[,] to2dArray()
+        {
+            int[,] intBoard = new int[NbCellX, NbCellY];
+            for(int i = 0; i < NbCellX; i++)
+            {
+                for(int j = 0; j < NbCellY; j++)
+                {
+                    intBoard[i, j] = Convert.ToInt32(board[i, j].IsAlive);
+                }
+            }
+            return intBoard;
+        }
+
+        public void from2dArray(int[,] intBoard)
+        {
+            NbCellX = intBoard.GetLength(0);
+            NbCellY = intBoard.GetLength(1);
+
+            board = new Cell[NbCellX, NbCellY];
+            InitBoard();
+            for (int i = 0; i < NbCellX; i++)
+            {
+                for(int j = 0; j < NbCellY; j++)
+                {
+                    board[i, j].IsAlive = Convert.ToBoolean(intBoard[i, j]);
+                }
+            }
         }
 
         /// <summary>
