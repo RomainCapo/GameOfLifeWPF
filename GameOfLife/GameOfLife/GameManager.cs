@@ -68,12 +68,6 @@ namespace GameOfLife
             isPaused = true;
         }
 
-        public void Stop()
-        {
-            _shutdownEvent.Set();
-            _pauseEvent.Set();
-            thread.Join();
-        }
         public void AleaInit()
         {
             Board.AleaInit();

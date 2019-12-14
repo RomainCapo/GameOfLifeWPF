@@ -87,7 +87,7 @@ namespace GameOfLife
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private int ComputeCellXYNeighbours(int x, int y)
+        public int ComputeCellXYNeighbours(int x, int y)
         {
             int xToTest;
             int yToTest;
@@ -96,17 +96,21 @@ namespace GameOfLife
             {
                 for (int j = -1; j <= 1; j++)
                 {
+                    
                     xToTest = x + i;
                     yToTest = y + j;
+                    
                     if ((xToTest >= 0 && yToTest >= 0) && (xToTest < NbCellX && yToTest < NbCellY))
                     {
-                        if (board[xToTest, yToTest].IsAlive && (xToTest != 0) && (xToTest != 0))
+                        if(board[xToTest, yToTest].IsAlive)
                         {
                             nbNeighbours++;
                         }
                     }
                 }
             }
+            if (board[x, y].IsAlive)
+                nbNeighbours--;
             return nbNeighbours;
         }
 

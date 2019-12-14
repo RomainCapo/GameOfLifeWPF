@@ -80,8 +80,17 @@ namespace GameOfLife
             }
         }
 
+        private void EnableSliderDimensionAndRadioBoard(bool isEnabled)
+        {
+            (this.FindName("SliderWidth") as Slider).IsEnabled = isEnabled;
+            (this.FindName("SliderHeight") as Slider).IsEnabled = isEnabled;
+            (this.FindName("RadioButtonRandom") as RadioButton).IsEnabled = isEnabled;
+            (this.FindName("RadioButtonCustomized") as RadioButton).IsEnabled = isEnabled;
+        }
+
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
+            EnableSliderDimensionAndRadioBoard(false);
 
             SeriesCollection = new SeriesCollection
             {
@@ -101,17 +110,22 @@ namespace GameOfLife
         public void Cell_Click(object sender, RoutedEventArgs e)
         {
             Button currentCell = sender as Button;
-            gm.Board[Grid.GetColumn(currentCell), Grid.GetRow(currentCell)].IsAlive = !gm.Board[Grid.GetColumn(currentCell), Grid.GetRow(currentCell)].IsAlive;
+            int iCol = Grid.GetColumn(currentCell);
+            int iRow = Grid.GetRow(currentCell);
+            gm.Board[iCol, iRow].IsAlive = !gm.Board[iCol, iRow].IsAlive;
         }
 
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
         {
+            EnableSliderDimensionAndRadioBoard(true);
             gm.Pause();
         }
 
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
-            gm.Stop();
+            EnableSliderDimensionAndRadioBoard(true);
+            gm.Pause();
+            gm.Clear();
         }
 
         /// <summary>
@@ -153,7 +167,7 @@ namespace GameOfLife
             {
                 this.UpdateGrid((int)((Slider)sender).Value, gm.Board.NbCellY);
             }
-
+            gm.AleaInit();
         }
 
         public void SliderHeightValueChanged(object sender, DragCompletedEventArgs e)
@@ -162,6 +176,7 @@ namespace GameOfLife
             {
                 this.UpdateGrid(gm.Board.NbCellX, (int)((Slider)sender).Value);
             }
+            gm.AleaInit();
         }
     }
 }
