@@ -130,7 +130,7 @@
                 </StackPanel>
             </Border>
 
-            <lvc:CartesianChart Series="{Binding SeriesCollection}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="2">
+            <lvc:CartesianChart Series="{Binding PlotIterationCell}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="2">
                 <lvc:CartesianChart.AxisY>
                     <lvc:Axis MinValue="0"></lvc:Axis>
                 </lvc:CartesianChart.AxisY>

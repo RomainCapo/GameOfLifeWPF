@@ -15,20 +15,31 @@ namespace GameOfLife
     {
         private const int INITIAL_NB_CELL_X = 20;
         private const int INITIAL_NB_CELL_Y = 10;
+
+        /// <summary>
+        /// maximum number of cell on x (for precompute cell array)
+        /// </summary>
         private const int MAX_BOARD_SIZE_X = 100;
+
+        /// <summary>
+        /// maximum number of cell on y (for precompute cell array)
+        /// </summary>
         private const int MAX_BOARD_SIZE_Y = 100;
 
         public Board Board { get; set; }
-        public int IterationInterval { get; set; }
-
-        private Thread thread;
-        private bool isPaused = false;
-
         private MainWindow mw;
 
-        ManualResetEvent shutdownEvent = new ManualResetEvent(false);
+        private Thread animationThread;
+
+        private bool isPaused = false;
+        public int IterationInterval { get; set; }
+
         ManualResetEvent pauseEvent = new ManualResetEvent(true);
 
+        /// <summary>
+        /// GameManager constructor
+        /// </summary>
+        /// <param name="mw">MainWindow object</param>
         public GameManager(MainWindow mw)
         {
             this.mw = mw;
@@ -38,6 +49,10 @@ namespace GameOfLife
             IterationInterval = 100;
         }
 
+        /// <summary>
+        /// Init the model Board and the graphical board with the maximum value for x and y.
+        /// This operation is performed in order to precompute the array to increase performance.
+        /// </summary>
         private void InitBoard()
         {
             Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y, MAX_BOARD_SIZE_X, MAX_BOARD_SIZE_Y);
@@ -47,19 +62,25 @@ namespace GameOfLife
             {
                 for (int j = 0; j < 100; j++)
                 {
+                    //Bind the CellColor property of the celle object with the graphical button backgroung property
                     Button cell = new Button();
 
                     Binding bindingCellColor = new Binding("CellColor");
                     bindingCellColor.Source = Board[i, j];
                     cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
 
-                    cell.Click += new RoutedEventHandler(mw.CellClick);
+                    cell.Click += new RoutedEventHandler(mw.CellClick);//Bind the clic event to each button
 
                     mw.GraphicalBoard[i, j] = cell;
                 }
             }
         }
 
+        /// <summary>
+        /// Update the board size
+        /// </summary>
+        /// <param name="nbCellX">new x size</param>
+        /// <param name="nbCellY">new y size</param>
         public void UpdateBoard(int nbCellX, int nbCellY)
         {
             Board.NbCellX = nbCellX;
@@ -67,6 +88,10 @@ namespace GameOfLife
             mw.UpdateGrid();
         }
 
+        /// <summary>
+        /// Reset game function.
+        /// Pause the game, clear the plot and the board.
+        /// </summary>
         public void ResetGame()
         {
             Pause();
@@ -74,14 +99,16 @@ namespace GameOfLife
             Board.Clear();
         }
 
+        /// <summary>
+        /// Simulation thread. 
+        /// Compute the next board iteration. 
+        /// Stop the thread if the pause event is run or if the simulation is ended.
+        /// </summary>
         private void ThreadMethod()
         {
             while(true)
             {
                 pauseEvent.WaitOne(Timeout.Infinite);
-
-                if (shutdownEvent.WaitOne(0))
-                    break;
                 
                 mw.AddValueToGraph(Board.NbAliveCells);
 
@@ -96,6 +123,9 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Run the simulation 
+        /// </summary>
         public void Play()
         {
             if(isPaused == true)
@@ -105,17 +135,25 @@ namespace GameOfLife
             }
             else
             {
-                thread = new Thread(ThreadMethod);
-                thread.Start();
+                animationThread = new Thread(ThreadMethod);
+                animationThread.Start();
             }
         }
 
+        /// <summary>
+        /// Pause the simulation
+        /// </summary>
         public void Pause()
         {
             pauseEvent.Reset();
             isPaused = true;
         }
 
+        /// <summary>
+        /// Save the board state. The board state is represented by a 2D array of int.
+        /// A binary stream is used to serialize the array.
+        /// </summary>
+        /// <param name="filename">filname of the file</param>
         public void SaveBoard(string filename)
         {
             using (Stream stream = File.Open(filename, FileMode.Create)) 
@@ -125,7 +163,11 @@ namespace GameOfLife
             }
         }
 
-        public void RestoreBoard(string filename, Grid boardGrid)
+        /// <summary>
+        /// Restore the board state from a 2D int array. If the file can't be open open a exception is raise.
+        /// </summary>
+        /// <param name="filename">filename of the file</param>
+        public void RestoreBoard(string filename)
         {
 
             using (Stream stream = File.Open(filename, FileMode.Open))
@@ -140,7 +182,7 @@ namespace GameOfLife
                     MessageBox.Show("The file cannot be read !");
                 }
             }
-            mw.UpdateGrid();
+            mw.UpdateGrid();//Update the grid after load the board
         }
     }
 }

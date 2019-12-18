@@ -18,10 +18,13 @@ namespace GameOfLife
     {
         private GameManager gm;
 
+        /// <summary>
+        /// Array that containing the graphic buttons
+        /// </summary>
         public Button[,] GraphicalBoard { get; set; }
 
-        public SeriesCollection SeriesCollection { get; private set; }
-        public Func<double, string> YFormatter { get; private set; }
+        public SeriesCollection PlotIterationCell { get; private set; }
+
         private double precedentValueGraph;
 
         public MainWindow()
@@ -29,14 +32,17 @@ namespace GameOfLife
             InitializeComponent();
 
             gm = new GameManager(this);
-            UpdateGrid();
 
+            UpdateGrid();
             InitPlot();
         }
 
+        /// <summary>
+        /// Init the plot parameters
+        /// </summary>
         private void InitPlot()
         {
-            SeriesCollection = new SeriesCollection
+            PlotIterationCell = new SeriesCollection
             {
                 new LineSeries
                 {
@@ -52,6 +58,13 @@ namespace GameOfLife
             precedentValueGraph = 0;
         }
 
+        /// <summary>
+        /// Update the board cell from the precomputed graphical board.
+        /// Clear the button in the graphical board, the column definition and the row definition.
+        /// Create the new column and row definiton and add the button on the interface.
+        /// The button come from the precomputed array of button.
+        /// The board is resized with the actual size of the model board.
+        /// </summary>
         public void UpdateGrid()
         {
             Grid boardGrid = this.FindName("BoardGrid") as Grid;
@@ -84,6 +97,11 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Cell click event. Invert the celle state.
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void CellClick(object sender, RoutedEventArgs e)
         {
             Button currentCell = sender as Button;
@@ -92,40 +110,80 @@ namespace GameOfLife
             gm.Board[iCol, iRow].IsAlive = !gm.Board[iCol, iRow].IsAlive;
         }
 
-        private void EnableInterface(bool isEnabled)
+        /// <summary>
+        /// Disable interface component
+        /// </summary>
+        /// <param name="isEnabled">true for enable interface, false to disable</param>
+        public void EnableInterface(bool isEnabled)
         {
-            (this.FindName("IntegerUpDownWidth") as IntegerUpDown).IsEnabled = isEnabled;
-            (this.FindName("IntegerUpDownHeight") as IntegerUpDown).IsEnabled = isEnabled;
-            (this.FindName("ButtonRandom") as Button).IsEnabled = isEnabled;
-            (this.FindName("ButtonClear") as Button).IsEnabled = isEnabled;
-            (this.FindName("ButtonSave") as Button).IsEnabled = isEnabled;
-            (this.FindName("ButtonRestore") as Button).IsEnabled = isEnabled;
+            (FindName("IntegerUpDownWidth") as IntegerUpDown).IsEnabled = isEnabled;
+            (FindName("IntegerUpDownHeight") as IntegerUpDown).IsEnabled = isEnabled;
+            (FindName("ButtonRandom") as Button).IsEnabled = isEnabled;
+            (FindName("ButtonClear") as Button).IsEnabled = isEnabled;
+            (FindName("ButtonSave") as Button).IsEnabled = isEnabled;
+            (FindName("ButtonRestore") as Button).IsEnabled = isEnabled;
         }
 
+        /// <summary>
+        /// Play click event
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
             EnableInterface(false);
             gm.Play();           
         }
-        
 
+        /// <summary>
+        /// Pause click event
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
         {
             EnableInterface(true);
             gm.Pause();
         }
 
+        /// <summary>
+        /// Strop click event
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
             EnableInterface(true);
             gm.ResetGame();
         }
 
+        /// <summary>
+        /// Clear the plot value
+        /// </summary>
         public void ClearPlot()
         {
-            SeriesCollection[0].Values.Clear();
+            PlotIterationCell[0].Values.Clear();
         }
 
+        /// <summary>
+        /// Allow to add a value to the plot
+        /// </summary>
+        /// <param name="value">double value to add on the plot</param>
+        public void AddValueToGraph(double value)
+        {
+            if (!value.Equals(precedentValueGraph))
+            {
+                PlotIterationCell[0].Values.Add(value);
+                precedentValueGraph = value;
+            }
+        }
+
+        /// <summary>
+        /// Save board click event.
+        /// Open a SaveFileDialog for save the board in the file
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonSaveClick(object sender, RoutedEventArgs e)
         {
             SaveFileDialog dlg = new SaveFileDialog
@@ -141,6 +199,11 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Open a OpenFileDialog for load the board from a file
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonRestoreClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog
@@ -152,7 +215,7 @@ namespace GameOfLife
 
             if(dlg.ShowDialog() == true)
             {
-                gm.RestoreBoard(dlg.FileName, BoardGrid);
+                gm.RestoreBoard(dlg.FileName);
             }
             
         }
@@ -160,8 +223,8 @@ namespace GameOfLife
         /// <summary>
         /// Edit time value when slider emit an ValueChanged
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void SliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if(gm != null)
@@ -170,48 +233,64 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Clear button event
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonClearClick(object sender, RoutedEventArgs e)
         {
             gm?.Board.Clear();
         }
 
-
+        /// <summary>
+        /// Random button event
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void ButtonRandomClick(object sender, RoutedEventArgs e)
         {
             gm?.Board.Clear();
             gm?.Board.AleaInit();
         }
 
+        /// <summary>
+        /// IntegerUpDown for width value change event.
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void IntegerUpDownWidthValueChanged(object sender, RoutedEventArgs e)
         {
             if (gm != null)
             {
                 gm.UpdateBoard((int)((IntegerUpDown)sender).Value, gm.Board.NbCellY);
-                gm.Board.AleaInit();
+                gm.Board.Clear();
             }
         }
 
+        /// <summary>
+        /// IntegerUpDown for height value change event.
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         public void IntegerUpDownHeightValueChanged(object sender, RoutedEventArgs e)
         {
             if (gm != null)
             {
                 gm.UpdateBoard(gm.Board.NbCellX, (int)((IntegerUpDown)sender).Value);
-                gm.Board.AleaInit();
+                gm.Board.Clear();
             }
         }
 
+        /// <summary>
+        /// Closing event.
+        /// It is necessary to kill the process when closing the application
+        /// </summary>
+        /// <param name="sender">sender object</param>
+        /// <param name="e">event object</param>
         private void WindowClosing(object sender, CancelEventArgs e)
         {
             Environment.Exit(0);
-        }
-
-        public void AddValueToGraph(double value)
-        {
-            if (!value.Equals(precedentValueGraph))
-            {
-                SeriesCollection[0].Values.Add(value);
-                precedentValueGraph = value;
-            }
         }
     }
 }

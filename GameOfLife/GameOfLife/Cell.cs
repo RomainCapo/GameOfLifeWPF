@@ -10,7 +10,6 @@ using System.Windows.Media;
 
 namespace GameOfLife
 {
-    [Serializable]
     class Cell : INotifyPropertyChanged
     {
         public SolidColorBrush CellColor { get; private set; }
@@ -33,26 +32,20 @@ namespace GameOfLife
                 {
                     CellColor = Brushes.Black;
                 }   
-                OnPropertyChanged("CellColor");
+                OnPropertyChanged("CellColor");//Update the cell color when cell state is updated
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public Cell()
         {
-            isAlive = false;
+            isAlive = false; //initially the cell is dead
         }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string info)
         {
-            
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
-
-
     }
 }
