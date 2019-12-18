@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using LiveCharts;
 using LiveCharts.Wpf;
@@ -48,16 +49,60 @@ namespace GameOfLife
             DataContext = this;
             PrecedentValueGraph = 0;
 
-            gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
+            GenerateGrid();
         }
 
         private void UpdateGrid(int nbCellX, int nbCellY)
         {
             gm.UpdateBoard(nbCellX, nbCellY);
-            gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
+            GenerateGrid();
         }
 
-        
+        public void GenerateGrid()
+        {
+            Grid boardGrid = this.FindName("BoardGrid") as Grid;
+
+            boardGrid.Children.Clear();
+            boardGrid.RowDefinitions.Clear();
+            boardGrid.ColumnDefinitions.Clear();
+
+            Board b = gm.Board;
+
+            for (int i = 0; i < b.NbCellX; i++)
+            {
+                boardGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            for (int j = 0; j < b.NbCellY; j++)
+            {
+                boardGrid.RowDefinitions.Add(new RowDefinition());
+            }
+
+            for (int i = 0; i < b.NbCellX; i++)
+            {
+                for (int j = 0; j < gm.Board.NbCellY; j++)
+                {
+                    Button cell = new Button();
+
+                    Binding bindingCellColor = new Binding("CellColor");
+                    bindingCellColor.Source = b[i, j];
+                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
+
+                    cell.Click += new RoutedEventHandler(CellClick);
+
+                    boardGrid.Children.Add(cell);
+                    Grid.SetColumn(cell, i);
+                    Grid.SetRow(cell, j);
+                }
+            }
+        }
+
+        public void CellClick(object sender, RoutedEventArgs e)
+        {
+            Button currentCell = sender as Button;
+            int iCol = Grid.GetColumn(currentCell);
+            int iRow = Grid.GetRow(currentCell);
+            gm.Board[iCol, iRow].IsAlive = !gm.Board[iCol, iRow].IsAlive;
+        }
 
         private void EnableInterface(bool isEnabled)
         {

@@ -80,47 +80,7 @@ namespace GameOfLife
             isPaused = true;
         }
 
-        public void GenerateGrid(Grid boardGrid)
-        {
-            boardGrid.Children.Clear();
-            boardGrid.RowDefinitions.Clear();
-            boardGrid.ColumnDefinitions.Clear();
-
-            for (int i = 0; i < Board.NbCellX; i++)
-            {
-                boardGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            }
-            for (int j = 0; j < Board.NbCellY; j++)
-            {
-                boardGrid.RowDefinitions.Add(new RowDefinition());
-            }
-
-            for (int i = 0; i < Board.NbCellX; i++)
-            {
-                for (int j = 0; j < Board.NbCellY; j++)
-                {
-                    Button cell = new Button();
-
-                    Binding bindingCellColor = new Binding("CellColor");
-                    bindingCellColor.Source = Board[i, j];
-                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
-
-                    cell.Click += new RoutedEventHandler(CellClick);
-
-                    boardGrid.Children.Add(cell);
-                    Grid.SetColumn(cell, i);
-                    Grid.SetRow(cell, j);
-                }
-            }
-        }
-
-        public void CellClick(object sender, RoutedEventArgs e)
-        {
-            Button currentCell = sender as Button;
-            int iCol = Grid.GetColumn(currentCell);
-            int iRow = Grid.GetRow(currentCell);
-            Board[iCol, iRow].IsAlive = !Board[iCol, iRow].IsAlive;
-        }
+        
 
         public void SaveBoard(string filename)
         {
@@ -146,7 +106,7 @@ namespace GameOfLife
                     MessageBox.Show("The file cannot be read !");
                 }
             }
-            GenerateGrid(boardGrid);
+            mw.GenerateGrid();
         }
     }
 }
