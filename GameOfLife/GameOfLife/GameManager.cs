@@ -15,34 +15,33 @@ namespace GameOfLife
     {
         private const int INITIAL_NB_CELL_X = 20;
         private const int INITIAL_NB_CELL_Y = 10;
+        private const int MAX_BOARD_SIZE_X = 100;
+        private const int MAX_BOARD_SIZE_Y = 100;
 
         public Board Board { get; set; }
-        public bool IsGameRunning { get; set; }
-        public int Time { get; set; }
+        public int IterationInterval { get; set; }
 
         private Thread thread;
         private bool isPaused = false;
 
         private MainWindow mw;
 
-        ManualResetEvent _shutdownEvent = new ManualResetEvent(false);
-        ManualResetEvent _pauseEvent = new ManualResetEvent(true);
+        ManualResetEvent shutdownEvent = new ManualResetEvent(false);
+        ManualResetEvent pauseEvent = new ManualResetEvent(true);
 
         public GameManager(MainWindow mw)
         {
             this.mw = mw;
-            //Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y);
-            preGenerateGrid();
+            InitBoard();
             Board.AleaInit();
 
-            IsGameRunning = false;
-            Time = 100;
+            IterationInterval = 100;
         }
 
-        private void preGenerateGrid()
+        private void InitBoard()
         {
-            Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y);
-            mw.GraphicalBoard = new Button[100, 100];
+            Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y, MAX_BOARD_SIZE_X, MAX_BOARD_SIZE_Y);
+            mw.GraphicalBoard = new Button[MAX_BOARD_SIZE_X, MAX_BOARD_SIZE_Y];
 
             for (int i = 0; i < 100; i++)
             {
@@ -54,43 +53,46 @@ namespace GameOfLife
                     bindingCellColor.Source = Board[i, j];
                     cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
 
-                    cell.Click += new RoutedEventHandler(CellClick);
+                    cell.Click += new RoutedEventHandler(mw.CellClick);
 
                     mw.GraphicalBoard[i, j] = cell;
                 }
             }
         }
 
-        public void CellClick(object sender, RoutedEventArgs e)
-        {
-            Button currentCell = sender as Button;
-            int iCol = Grid.GetColumn(currentCell);
-            int iRow = Grid.GetRow(currentCell);
-            Board[iCol, iRow].IsAlive = !Board[iCol, iRow].IsAlive;
-        }
-
         public void UpdateBoard(int nbCellX, int nbCellY)
         {
             Board.NbCellX = nbCellX;
             Board.NbCellY= nbCellY;
-            mw.GenerateGrid();
+            mw.UpdateGrid();
+        }
+
+        public void ResetGame()
+        {
+            Pause();
+            mw.ClearPlot();
+            Board.Clear();
         }
 
         private void ThreadMethod()
         {
             while(true)
             {
-                _pauseEvent.WaitOne(Timeout.Infinite);
+                pauseEvent.WaitOne(Timeout.Infinite);
 
-                if (_shutdownEvent.WaitOne(0))
-                {
+                if (shutdownEvent.WaitOne(0))
                     break;
-                }
-
+                
                 mw.AddValueToGraph(Board.NbAliveCells);
 
                 Board.NextIteration();
-                System.Threading.Thread.Sleep(Time);
+
+                if (Board.isEnd)
+                {
+                    MessageBox.Show("Game is ended");
+                    ResetGame();
+                }
+                Thread.Sleep(IterationInterval);
             }
         }
 
@@ -98,7 +100,7 @@ namespace GameOfLife
         {
             if(isPaused == true)
             {
-                _pauseEvent.Set();
+                pauseEvent.Set();
                 isPaused = false;
             }
             else
@@ -110,7 +112,7 @@ namespace GameOfLife
 
         public void Pause()
         {
-            _pauseEvent.Reset();
+            pauseEvent.Reset();
             isPaused = true;
         }
 
@@ -138,7 +140,7 @@ namespace GameOfLife
                     MessageBox.Show("The file cannot be read !");
                 }
             }
-            mw.GenerateGrid();
+            mw.UpdateGrid();
         }
     }
 }

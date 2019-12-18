@@ -18,6 +18,11 @@ namespace GameOfLife
         public int NbCellX { get; set; }
         public int NbCellY { get; set; }
 
+        public bool isEnd { get; private set; }
+
+        private readonly int MAX_BOARD_SIZE_X;
+        private readonly int MAX_BOARD_SIZE_Y;
+
         public double NbAliveCells
         {
             get
@@ -39,18 +44,20 @@ namespace GameOfLife
             }
         }
 
-        Random rand = new Random();
+        Random aleaRand = new Random();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="nbCellX"></param>
         /// <param name="nbCellY"></param>
-        public Board(int nbCellX, int nbCellY)
+        public Board(int nbCellX, int nbCellY, int maxCellX, int maxCellY)
         {
             NbCellX = nbCellX;
             NbCellY = nbCellY;
-            board = new Cell[100, 100];
+            MAX_BOARD_SIZE_X = maxCellX;
+            MAX_BOARD_SIZE_Y = maxCellY;
+            board = new Cell[MAX_BOARD_SIZE_X, MAX_BOARD_SIZE_Y];
             InitBoard();
         }
 
@@ -117,9 +124,9 @@ namespace GameOfLife
         /// </summary>
         private void InitBoard()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < MAX_BOARD_SIZE_X; i++)
             {
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < MAX_BOARD_SIZE_Y; j++)
                 {
                     board[i, j] = new Cell();
                 }
@@ -131,11 +138,12 @@ namespace GameOfLife
         /// </summary>
         public void AleaInit()
         {
+            Clear();
             for (int i = 0; i < NbCellX; i++)
             {
-                for (int j = 0; j < rand.Next(0, NbCellY); j++)
+                for (int j = 0; j < aleaRand.Next(0, NbCellY); j++)
                 {
-                    board[i, rand.Next(0, NbCellY)].IsAlive = true;
+                    board[i, aleaRand.Next(0, NbCellY)].IsAlive = true;
                 }
             }
         }
@@ -188,6 +196,7 @@ namespace GameOfLife
 
         public void NextIteration()
         {
+            isEnd = true;
             int[,] boardNeighbours = this.computeBoardNeighbours();
 
             for (int i = 0; i < NbCellX; i++)
@@ -200,11 +209,13 @@ namespace GameOfLife
                         if (nbNeighbours < 2)
                         {
                             board[i, j].IsAlive = false;
+                            isEnd = false;
                         }
 
                         if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
+                            isEnd = false;
                         }
                     }
                     else
@@ -212,6 +223,7 @@ namespace GameOfLife
                         if (nbNeighbours == 3)
                         {
                             board[i, j].IsAlive = true;
+                            isEnd = false;
                         }
                     }
                 }

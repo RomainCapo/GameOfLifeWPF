@@ -22,16 +22,16 @@ namespace GameOfLife
 
         public SeriesCollection SeriesCollection { get; private set; }
         public Func<double, string> YFormatter { get; private set; }
-        private double PrecedentValueGraph;
+        private double precedentValueGraph;
 
         public MainWindow()
         {
             InitializeComponent();
 
             gm = new GameManager(this);
+            UpdateGrid();
 
             InitPlot();
-            GenerateGrid();
         }
 
         private void InitPlot()
@@ -49,10 +49,10 @@ namespace GameOfLife
             };
 
             DataContext = this;
-            PrecedentValueGraph = 0;
+            precedentValueGraph = 0;
         }
 
-        public void GenerateGrid()
+        public void UpdateGrid()
         {
             Grid boardGrid = this.FindName("BoardGrid") as Grid;
 
@@ -105,8 +105,6 @@ namespace GameOfLife
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
         {
             EnableInterface(false);
-
-            gm.IsGameRunning = true;
             gm.Play();           
         }
         
@@ -120,7 +118,7 @@ namespace GameOfLife
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
             EnableInterface(true);
-            //gm.ResetGame();
+            gm.ResetGame();
         }
 
         public void ClearPlot()
@@ -168,7 +166,7 @@ namespace GameOfLife
         {
             if(gm != null)
             {
-                gm.Time = (int)e.NewValue;
+                gm.IterationInterval = (int)e.NewValue;
             }
         }
 
@@ -209,10 +207,10 @@ namespace GameOfLife
 
         public void AddValueToGraph(double value)
         {
-            if (!value.Equals(PrecedentValueGraph))
+            if (!value.Equals(precedentValueGraph))
             {
                 SeriesCollection[0].Values.Add(value);
-                PrecedentValueGraph = value;
+                precedentValueGraph = value;
             }
         }
     }
