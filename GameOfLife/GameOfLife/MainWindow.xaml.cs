@@ -12,21 +12,17 @@ using Xceed.Wpf.Toolkit;
 namespace GameOfLife
 {
     /// <summary>
-    /// Réglage interactif de la vitesse ainsi que des dimensions de la simulation
-    /// Option de pause/Play et Réinitialisation de la simulation
-    /// Etat de départ aléatoire ou au choix de l'utilisateur
-    /// Affichage d'un graphe avec la population (nombre de celllules) selon l'itération
-    /// Chargement/Sauvegarde d'un état de la simulation
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        GameManager gm;
+        private GameManager gm;
 
-        public SeriesCollection SeriesCollection { get; set; }
-        public Func<double, string> YFormatter { get; set; }
+        public Button[,] GraphicalBoard { get; set; }
 
-        private double PrecedentValueGraph { get; set; }
+        public SeriesCollection SeriesCollection { get; private set; }
+        public Func<double, string> YFormatter { get; private set; }
+        private double PrecedentValueGraph;
 
         public MainWindow()
         {
@@ -34,13 +30,19 @@ namespace GameOfLife
 
             gm = new GameManager(this);
 
+            InitPlot();
+            GenerateGrid();
+        }
+
+        private void InitPlot()
+        {
             SeriesCollection = new SeriesCollection
             {
                 new LineSeries
                 {
                     Title = "Number of Cells : ",
                     Values = new ChartValues<double> {},
-                    Stroke = Brushes.Red, 
+                    Stroke = Brushes.Red,
                     Fill = Brushes.Transparent,
                     Opacity = 0.5
                 }
@@ -48,14 +50,6 @@ namespace GameOfLife
 
             DataContext = this;
             PrecedentValueGraph = 0;
-
-            GenerateGrid();
-        }
-
-        private void UpdateGrid(int nbCellX, int nbCellY)
-        {
-            gm.UpdateBoard(nbCellX, nbCellY);
-            GenerateGrid();
         }
 
         public void GenerateGrid()
@@ -81,13 +75,7 @@ namespace GameOfLife
             {
                 for (int j = 0; j < gm.Board.NbCellY; j++)
                 {
-                    Button cell = new Button();
-
-                    Binding bindingCellColor = new Binding("CellColor");
-                    bindingCellColor.Source = b[i, j];
-                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
-
-                    cell.Click += new RoutedEventHandler(CellClick);
+                    Button cell = GraphicalBoard[i, j];
 
                     boardGrid.Children.Add(cell);
                     Grid.SetColumn(cell, i);
@@ -132,9 +120,11 @@ namespace GameOfLife
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
             EnableInterface(true);
-            gm.Pause();
-            gm.Board.Clear();
+            //gm.ResetGame();
+        }
 
+        public void ClearPlot()
+        {
             SeriesCollection[0].Values.Clear();
         }
 
@@ -151,7 +141,6 @@ namespace GameOfLife
             {
                 gm.SaveBoard(dlg.FileName);
             }
-
         }
 
         public void ButtonRestoreClick(object sender, RoutedEventArgs e)
@@ -199,7 +188,7 @@ namespace GameOfLife
         {
             if (gm != null)
             {
-                this.UpdateGrid((int)((IntegerUpDown)sender).Value, gm.Board.NbCellY);
+                gm.UpdateBoard((int)((IntegerUpDown)sender).Value, gm.Board.NbCellY);
                 gm.Board.AleaInit();
             }
         }
@@ -208,14 +197,14 @@ namespace GameOfLife
         {
             if (gm != null)
             {
-                this.UpdateGrid(gm.Board.NbCellX, (int)((IntegerUpDown)sender).Value);
+                gm.UpdateBoard(gm.Board.NbCellX, (int)((IntegerUpDown)sender).Value);
                 gm.Board.AleaInit();
             }
         }
 
         private void WindowClosing(object sender, CancelEventArgs e)
         {
-            Application.Current.Shutdown();
+            Environment.Exit(0);
         }
 
         public void AddValueToGraph(double value)

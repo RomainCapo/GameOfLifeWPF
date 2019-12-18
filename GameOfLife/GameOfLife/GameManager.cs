@@ -31,15 +31,49 @@ namespace GameOfLife
         public GameManager(MainWindow mw)
         {
             this.mw = mw;
-            Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y);
+            //Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y);
+            preGenerateGrid();
             Board.AleaInit();
 
             IsGameRunning = false;
             Time = 100;
         }
+
+        private void preGenerateGrid()
+        {
+            Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y);
+            mw.GraphicalBoard = new Button[100, 100];
+
+            for (int i = 0; i < 100; i++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    Button cell = new Button();
+
+                    Binding bindingCellColor = new Binding("CellColor");
+                    bindingCellColor.Source = Board[i, j];
+                    cell.SetBinding(Button.BackgroundProperty, bindingCellColor);
+
+                    cell.Click += new RoutedEventHandler(CellClick);
+
+                    mw.GraphicalBoard[i, j] = cell;
+                }
+            }
+        }
+
+        public void CellClick(object sender, RoutedEventArgs e)
+        {
+            Button currentCell = sender as Button;
+            int iCol = Grid.GetColumn(currentCell);
+            int iRow = Grid.GetRow(currentCell);
+            Board[iCol, iRow].IsAlive = !Board[iCol, iRow].IsAlive;
+        }
+
         public void UpdateBoard(int nbCellX, int nbCellY)
         {
-            Board = new Board(nbCellX, nbCellY);
+            Board.NbCellX = nbCellX;
+            Board.NbCellY= nbCellY;
+            mw.GenerateGrid();
         }
 
         private void ThreadMethod()
@@ -79,8 +113,6 @@ namespace GameOfLife
             _pauseEvent.Reset();
             isPaused = true;
         }
-
-        
 
         public void SaveBoard(string filename)
         {

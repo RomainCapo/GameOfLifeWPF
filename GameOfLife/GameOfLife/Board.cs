@@ -15,8 +15,8 @@ namespace GameOfLife
     class Board
     {
         Cell[,] board;
-        public int NbCellX { get; private set; }
-        public int NbCellY { get; private set; }
+        public int NbCellX { get; set; }
+        public int NbCellY { get; set; }
 
         public double NbAliveCells
         {
@@ -50,7 +50,7 @@ namespace GameOfLife
         {
             NbCellX = nbCellX;
             NbCellY = nbCellY;
-            board = new Cell[NbCellX, NbCellY];
+            board = new Cell[100, 100];
             InitBoard();
         }
 
@@ -117,9 +117,9 @@ namespace GameOfLife
         /// </summary>
         private void InitBoard()
         {
-            for (int i = 0; i < NbCellX; i++)
+            for (int i = 0; i < 100; i++)
             {
-                for (int j = 0; j < NbCellY; j++)
+                for (int j = 0; j < 100; j++)
                 {
                     board[i, j] = new Cell();
                 }
