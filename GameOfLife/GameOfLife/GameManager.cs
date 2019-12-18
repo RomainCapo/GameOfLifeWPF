@@ -25,8 +25,8 @@ namespace GameOfLife
 
         private MainWindow mw;
 
-        ManualResetEvent _shutdownEvent = new ManualResetEvent(false);
-        ManualResetEvent _pauseEvent = new ManualResetEvent(true);
+        ManualResetEvent shutdownEvent = new ManualResetEvent(false);
+        ManualResetEvent pauseEvent = new ManualResetEvent(true);
 
         public GameManager(MainWindow mw)
         {
@@ -40,23 +40,35 @@ namespace GameOfLife
         public void UpdateBoard(int nbCellX, int nbCellY)
         {
             Board = new Board(nbCellX, nbCellY);
+            mw.GenerateGrid();
+        }
+
+        public void ResetGame()
+        {
+            Pause();
+            mw.ClearPlot();
+            Board.Clear();
         }
 
         private void ThreadMethod()
         {
             while(true)
             {
-                _pauseEvent.WaitOne(Timeout.Infinite);
+                pauseEvent.WaitOne(Timeout.Infinite);
 
-                if (_shutdownEvent.WaitOne(0))
-                {
+                if (shutdownEvent.WaitOne(0))
                     break;
-                }
-
+                
                 mw.AddValueToGraph(Board.NbAliveCells);
 
                 Board.NextIteration();
-                System.Threading.Thread.Sleep(Time);
+
+                if (Board.isEnd)
+                {
+                    MessageBox.Show("Game is ended");
+                    ResetGame();
+                }
+                Thread.Sleep(Time);
             }
         }
 
@@ -64,7 +76,7 @@ namespace GameOfLife
         {
             if(isPaused == true)
             {
-                _pauseEvent.Set();
+                pauseEvent.Set();
                 isPaused = false;
             }
             else
@@ -76,11 +88,9 @@ namespace GameOfLife
 
         public void Pause()
         {
-            _pauseEvent.Reset();
+            pauseEvent.Reset();
             isPaused = true;
         }
-
-        
 
         public void SaveBoard(string filename)
         {

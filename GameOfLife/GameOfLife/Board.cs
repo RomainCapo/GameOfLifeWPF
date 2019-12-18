@@ -18,6 +18,8 @@ namespace GameOfLife
         public int NbCellX { get; private set; }
         public int NbCellY { get; private set; }
 
+        public bool isEnd { get; private set; }
+
         public double NbAliveCells
         {
             get
@@ -188,6 +190,7 @@ namespace GameOfLife
 
         public void NextIteration()
         {
+            isEnd = true;
             int[,] boardNeighbours = this.computeBoardNeighbours();
 
             for (int i = 0; i < NbCellX; i++)
@@ -200,11 +203,13 @@ namespace GameOfLife
                         if (nbNeighbours < 2)
                         {
                             board[i, j].IsAlive = false;
+                            isEnd = false;
                         }
 
                         if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
+                            isEnd = false;
                         }
                     }
                     else
@@ -212,6 +217,7 @@ namespace GameOfLife
                         if (nbNeighbours == 3)
                         {
                             board[i, j].IsAlive = true;
+                            isEnd = false;
                         }
                     }
                 }
