@@ -53,6 +53,8 @@ namespace GameOfLife
                     break;
                 }
 
+                mw.AddValueToGraph(Board.NbAliveCells);
+
                 Board.NextIteration();
                 System.Threading.Thread.Sleep(Time);
             }

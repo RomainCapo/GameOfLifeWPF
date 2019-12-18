@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using LiveCharts;
 using LiveCharts.Wpf;
 using Microsoft.Win32;
@@ -24,10 +25,29 @@ namespace GameOfLife
         public SeriesCollection SeriesCollection { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
+        private double PrecedentValueGraph { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+
             gm = new GameManager(this);
+
+            SeriesCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Number of Cells : ",
+                    Values = new ChartValues<double> {},
+                    Stroke = Brushes.Red, 
+                    Fill = Brushes.Transparent,
+                    Opacity = 0.5
+                }
+            };
+
+            DataContext = this;
+            PrecedentValueGraph = 0;
+
             gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
         }
 
@@ -53,18 +73,6 @@ namespace GameOfLife
         {
             EnableInterface(false);
 
-            SeriesCollection = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Title = "Series 1",
-                    Values = new ChartValues<double> { 4, 6, 5, 2 ,4, 4, 5, 6, 3, 5, 7, 8, 23, 45, 2, 3, 4, 12, 45 }
-                }
-            };
-
-            YFormatter = value => value.ToString("C");
-            DataContext = this;
-
             gm.IsGameRunning = true;
             gm.Play();           
         }
@@ -81,6 +89,8 @@ namespace GameOfLife
             EnableInterface(true);
             gm.Pause();
             gm.Board.Clear();
+
+            SeriesCollection[0].Values.Clear();
         }
 
         public void ButtonSaveClick(object sender, RoutedEventArgs e)
@@ -96,6 +106,7 @@ namespace GameOfLife
             {
                 gm.SaveBoard(dlg.FileName);
             }
+
         }
 
         public void ButtonRestoreClick(object sender, RoutedEventArgs e)
@@ -160,6 +171,15 @@ namespace GameOfLife
         private void WindowClosing(object sender, CancelEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        public void AddValueToGraph(double value)
+        {
+            if (!value.Equals(PrecedentValueGraph))
+            {
+                SeriesCollection[0].Values.Add(value);
+                PrecedentValueGraph = value;
+            }
         }
     }
 }
