@@ -37,10 +37,30 @@ namespace GameOfLife
         public SeriesCollection SeriesCollection { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
+        private double PrecedentValueGraph { get; set; }
+        private int NumberOfIteration { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
-            gm = new GameManager(20, 10);
+            gm = new GameManager(20, 10, this);
+
+            SeriesCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Number of Cells : ",
+                    Values = new ChartValues<double> {},
+                    Stroke = Brushes.Red, 
+                    Fill = Brushes.Transparent,
+                    Opacity = 0.5
+                }
+            };
+
+            DataContext = this;
+            PrecedentValueGraph = 0;
+            NumberOfIteration = 0;
+
             gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
         }
 
@@ -64,18 +84,6 @@ namespace GameOfLife
         {
             EnableInterface(false);
 
-            SeriesCollection = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Title = "Series 1",
-                    Values = new ChartValues<double> { 4, 6, 5, 2 ,4, 4, 5, 6, 3, 5, 7, 8, 23, 45, 2, 3, 4, 12, 45 }
-                }
-            };
-
-            YFormatter = value => value.ToString("C");
-            DataContext = this;
-
             gm.IsGameRunning = true;
             gm.Play();           
         }
@@ -92,11 +100,14 @@ namespace GameOfLife
             EnableInterface(true);
             gm.Pause();
             gm.Board.Clear();
+
+            SeriesCollection[0].Values.Clear();
+            NumberOfIteration = 0;
         }
 
         public void ButtonSaveClick(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dlg = new SaveFileDialog
+            /*SaveFileDialog dlg = new SaveFileDialog
             {
                 FileName = "BoardState",
                 DefaultExt = ".gol",
@@ -106,7 +117,9 @@ namespace GameOfLife
             if(dlg.ShowDialog() == true)
             {
                 //gm.SaveBoard(dlg.FileName);
-            }
+            }*/
+
+            gm.SaveBoard();
         }
 
         public void ButtonRestoreClick(object sender, RoutedEventArgs e)
@@ -160,6 +173,22 @@ namespace GameOfLife
         private void WindowClosing(object sender, CancelEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        public void AddValueToGraph(double value)
+        {
+            NumberOfIteration++;
+
+            if (!value.Equals(PrecedentValueGraph))
+            {
+                SeriesCollection[0].Values.Add(value);
+                PrecedentValueGraph = value;
+            }
+
+            /*if(NumberOfIteration > 10)
+            {
+                SeriesCollection[0].Values.RemoveAt(0);
+            }*/
         }
     }
 }

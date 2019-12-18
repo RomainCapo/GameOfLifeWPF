@@ -19,6 +19,27 @@ namespace GameOfLife
         public int NbCellX { get; set; }//todo
         public int NbCellY { get; set; }//todo
 
+        public double NbAliveCells
+        {
+            get
+            {
+                double sum = 0;
+
+                for (int i = 0; i < NbCellX; i++)
+                {
+                    for (int j = 0; j < NbCellY; j++)
+                    {
+                        if(board[i, j].IsAlive)
+                        {
+                            sum++;
+                        }
+                    }
+                }
+
+                return sum;
+            }
+        }
+
         Random rand = new Random();
 
         /// <summary>

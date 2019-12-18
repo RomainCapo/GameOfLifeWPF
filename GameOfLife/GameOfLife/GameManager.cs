@@ -18,16 +18,19 @@ namespace GameOfLife
         public bool IsGameRunning { get; set; }
         public int Time { get; set; }
 
+        private MainWindow mw;
         private Thread thread;
         private bool isPaused = false;
 
         ManualResetEvent _shutdownEvent = new ManualResetEvent(false);
         ManualResetEvent _pauseEvent = new ManualResetEvent(true);
 
-        public GameManager(int x, int y)
+        public GameManager(int x, int y, MainWindow mw)
         {
             Board = new Board(x, y);
             Board.AleaInit();
+
+            this.mw = mw;
 
             IsGameRunning = false;
             Time = 100;
@@ -47,6 +50,8 @@ namespace GameOfLife
                 {
                     break;
                 }
+
+                mw.AddValueToGraph(Board.NbAliveCells);
 
                 Board.NextIteration();
                 System.Threading.Thread.Sleep(Time);
