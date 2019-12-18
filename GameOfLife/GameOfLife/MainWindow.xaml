@@ -10,7 +10,10 @@
         WindowState="Maximized"
         Title="Game of Life"
         Background="Black" 
-        Closing="WindowClosing">
+        Closing="WindowClosing"
+        MinHeight="500"
+        MinWidth="800"
+        Icon="/images/flag.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="15*"></RowDefinition>
@@ -35,8 +38,8 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="4*"></RowDefinition>
                 <RowDefinition Height="8*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
             </Grid.RowDefinitions>
 
 

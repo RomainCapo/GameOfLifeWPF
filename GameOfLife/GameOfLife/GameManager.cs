@@ -13,7 +13,9 @@ namespace GameOfLife
 {
     class GameManager
     {
-        private const string BOARD_FILENAME = "board.txt";
+        private const int INITIAL_NB_CELL_X = 20;
+        private const int INITIAL_NB_CELL_Y = 10;
+
         public Board Board { get; set; }
         public bool IsGameRunning { get; set; }
         public int Time { get; set; }
@@ -21,12 +23,15 @@ namespace GameOfLife
         private Thread thread;
         private bool isPaused = false;
 
+        private MainWindow mw;
+
         ManualResetEvent _shutdownEvent = new ManualResetEvent(false);
         ManualResetEvent _pauseEvent = new ManualResetEvent(true);
 
-        public GameManager(int x, int y)
+        public GameManager(MainWindow mw)
         {
-            Board = new Board(x, y);
+            this.mw = mw;
+            Board = new Board(INITIAL_NB_CELL_X, INITIAL_NB_CELL_Y);
             Board.AleaInit();
 
             IsGameRunning = false;
@@ -115,22 +120,29 @@ namespace GameOfLife
             Board[iCol, iRow].IsAlive = !Board[iCol, iRow].IsAlive;
         }
 
-        public void SaveBoard()
+        public void SaveBoard(string filename)
         {
-            using (Stream stream = File.Open(BOARD_FILENAME, FileMode.Create)) 
+            using (Stream stream = File.Open(filename, FileMode.Create)) 
             {
                 var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                 binaryFormatter.Serialize(stream, Board.to2dArray());
             }
         }
 
-        public void RestoreBoard(Grid boardGrid)
+        public void RestoreBoard(string filename, Grid boardGrid)
         {
 
-            using (Stream stream = File.Open(BOARD_FILENAME, FileMode.Open))
+            using (Stream stream = File.Open(filename, FileMode.Open))
             {
-                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                Board.from2dArray((int[,])binaryFormatter.Deserialize(stream));
+                try
+                {
+                    var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                    Board.from2dArray((int[,])binaryFormatter.Deserialize(stream));
+                }
+                catch
+                {
+                    MessageBox.Show("The file cannot be read !");
+                }
             }
             GenerateGrid(boardGrid);
         }

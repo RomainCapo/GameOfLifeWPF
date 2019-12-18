@@ -124,5 +124,8 @@
     <Resource Include="images\play.png" />
     <Resource Include="images\stop.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\flag.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

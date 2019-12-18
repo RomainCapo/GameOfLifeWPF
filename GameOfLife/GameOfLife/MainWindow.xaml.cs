@@ -1,20 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using LiveCharts;
 using LiveCharts.Wpf;
 using Microsoft.Win32;
@@ -40,7 +27,7 @@ namespace GameOfLife
         public MainWindow()
         {
             InitializeComponent();
-            gm = new GameManager(20, 10);
+            gm = new GameManager(this);
             gm.GenerateGrid(this.FindName("BoardGrid") as Grid);
         }
 
@@ -58,6 +45,8 @@ namespace GameOfLife
             (this.FindName("IntegerUpDownHeight") as IntegerUpDown).IsEnabled = isEnabled;
             (this.FindName("ButtonRandom") as Button).IsEnabled = isEnabled;
             (this.FindName("ButtonClear") as Button).IsEnabled = isEnabled;
+            (this.FindName("ButtonSave") as Button).IsEnabled = isEnabled;
+            (this.FindName("ButtonRestore") as Button).IsEnabled = isEnabled;
         }
 
         public void ButtonPlayClick(object sender, RoutedEventArgs e)
@@ -105,13 +94,24 @@ namespace GameOfLife
             
             if(dlg.ShowDialog() == true)
             {
-                //gm.SaveBoard(dlg.FileName);
+                gm.SaveBoard(dlg.FileName);
             }
         }
 
         public void ButtonRestoreClick(object sender, RoutedEventArgs e)
         {
-            gm.RestoreBoard(BoardGrid);
+            OpenFileDialog dlg = new OpenFileDialog
+            {
+                DefaultExt = ".gol",
+                Filter = "Board state file (.gol)|*.gol"
+
+            };
+
+            if(dlg.ShowDialog() == true)
+            {
+                gm.RestoreBoard(dlg.FileName, BoardGrid);
+            }
+            
         }
 
         /// <summary>

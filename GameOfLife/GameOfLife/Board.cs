@@ -11,13 +11,12 @@ using System.Xml.Serialization;
 
 namespace GameOfLife
 {
-    [Serializable]
+
     class Board
     {
-        
         Cell[,] board;
-        public int NbCellX { get; set; }//todo
-        public int NbCellY { get; set; }//todo
+        public int NbCellX { get; private set; }
+        public int NbCellY { get; private set; }
 
         Random rand = new Random();
 
@@ -72,7 +71,13 @@ namespace GameOfLife
         public Cell this[int x, int y]
         {
             get { return board[x, y]; }
-            set { board[x, y] = value; }
+            set 
+            {
+                if(x >= 0 && x <= NbCellX && y >=0 && y <= NbCellY)
+                {
+                    board[x, y] = value;
+                }
+            }
         }
 
         public void Clear()
