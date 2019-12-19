@@ -20,7 +20,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="#c0392b" BorderThickness="0" Padding="5, 5" Margin="0,5,0,5">
+                        <Border x:Name="border" Background="#F44336" BorderThickness="0" Padding="5, 5" Margin="0,5,0,5">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="15" Direction="330" Color="Black" ShadowDepth="4" Opacity="0.3"></DropShadowEffect>
                             </Border.Effect>
@@ -85,7 +85,7 @@
             </Grid.RowDefinitions>
 
 
-            <Button Name="StartButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Play" Click="ButtonPlayClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5 0 0 0" Width="40" Height="40">
+            <Button Name="StartButton" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Content="Play" Click="ButtonPlayClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5 0 0 40" Width="40" Height="40">
                 <Button.Template>
                     <ControlTemplate>
                         <Image Source="/images/play.png"/>
@@ -93,7 +93,7 @@
                 </Button.Template>
             </Button>
 
-            <Button Name="PauseButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Pause" Click="ButtonPauseClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="55 0 0 0" Width="40" Height="40">
+            <Button Name="PauseButton" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Content="Pause" Click="ButtonPauseClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="55 0 0 40" Width="40" Height="40">
                 <Button.Template>
                     <ControlTemplate>
                         <Image Source="/images/pause.png"/>
@@ -101,7 +101,7 @@
                 </Button.Template>
             </Button>
 
-            <Button Name="StopButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Stop" Click="ButtonStopClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105 0 0 0" Width="40" Height="40">
+            <Button Name="StopButton" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Content="Stop" Click="ButtonStopClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105 0 0 40" Width="40" Height="40">
                 <Button.Template>
                     <ControlTemplate>
                         <Image Source="/images/stop.png"/>
@@ -110,7 +110,7 @@
             </Button>
 
             <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="White" Content="Time" FontSize="15"/>
-            <Slider Grid.Row="1" Grid.Column="1" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Bottom" Minimum="100" Maximum="5000" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
+            <Slider Grid.Row="1" Grid.Column="1" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Bottom" Minimum="100" Maximum="1500" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
             <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txtSliderTime" VerticalAlignment="Bottom" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
