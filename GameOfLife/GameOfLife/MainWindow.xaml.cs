@@ -24,6 +24,7 @@ namespace GameOfLife
         public Button[,] GraphicalBoard { get; set; }
 
         public SeriesCollection PlotIterationCell { get; private set; }
+        public SeriesCollection YearPyramid { get; private set; }
 
         private double precedentValueGraph;
 
@@ -35,6 +36,18 @@ namespace GameOfLife
 
             UpdateGrid();
             InitPlot();
+
+
+
+            YearPyramid = new SeriesCollection
+            {
+                new ColumnSeries
+                {
+                    Title = "Number of Cells : ",
+                    Values = new ChartValues<double> { 10, 50, 39, 50 },
+                    Fill = Brushes.Red
+                }
+            };
         }
 
         /// <summary>
@@ -49,8 +62,7 @@ namespace GameOfLife
                     Title = "Number of Cells : ",
                     Values = new ChartValues<double> {},
                     Stroke = Brushes.Red,
-                    Fill = Brushes.Transparent,
-                    Opacity = 0.5
+                    Fill = Brushes.Transparent
                 }
             };
 
