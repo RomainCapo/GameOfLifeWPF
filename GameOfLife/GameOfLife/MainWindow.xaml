@@ -70,7 +70,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/> <!-- Time label -->
                 <ColumnDefinition Width="4*"/> <!-- Slider -->
-                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="13*"/>
                 <ColumnDefinition Width="0.5*"/> 
                 <ColumnDefinition Width="13*"/> <!-- GRAPH -->
             </Grid.ColumnDefinitions>
@@ -124,8 +124,8 @@
             </Border>
 
             <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Foreground="White" Text="Time" FontSize="15"/>
-            <Slider Grid.Row="2" Grid.Column="0" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" Margin="50,0,0,0" VerticalAlignment="Center" Minimum="100" Maximum="1500" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
-            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtSliderTime" VerticalAlignment="Center" Foreground="White" FontSize="15" HorizontalAlignment="Left" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+            <Slider Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" Margin="50,0,30,0" VerticalAlignment="Center" Minimum="100" Maximum="1500" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
+            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtSliderTime" VerticalAlignment="Center" Foreground="White" FontSize="15" HorizontalAlignment="Right" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
 
             <lvc:CartesianChart Series="{Binding PlotIterationCell}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="3">
                 <lvc:CartesianChart.AxisY>
