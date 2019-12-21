@@ -11,7 +11,7 @@
         Title="Game of Life"
         Background="Black" 
         Closing="WindowClosing"
-        MinHeight="500"
+        MinHeight="600"
         MinWidth="800"
         Icon="/images/flag.ico">
 
@@ -20,7 +20,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="#c0392b" BorderThickness="0" Padding="5, 5" Margin="0,5,0,5">
+                        <Border x:Name="border" Background="#F44336" BorderThickness="0" Padding="5, 5" Margin="0,3,0,3">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="15" Direction="330" Color="Black" ShadowDepth="4" Opacity="0.3"></DropShadowEffect>
                             </Border.Effect>
@@ -59,9 +59,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="15*"></RowDefinition>
-            <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="6*"></RowDefinition>
-            <RowDefinition Height="0.5*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" x:Name="BoardGrid">
@@ -70,22 +68,21 @@
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*"/> <!-- Time label -->
+                <ColumnDefinition Width="4*"/> <!-- Time label -->
                 <ColumnDefinition Width="4*"/> <!-- Slider -->
-                <ColumnDefinition Width="1.5*"/> <!-- Value label -->
-                <ColumnDefinition Width="3*"/> <!-- Radio Button -->
-                <ColumnDefinition Width="3*"/> <!-- Sliders -->
-                <ColumnDefinition Width="0.5*"/> <!-- Sliders values -->
-                <ColumnDefinition Width="15*"/> <!-- GRAPH -->
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0.5*"/> 
+                <ColumnDefinition Width="13*"/> <!-- GRAPH -->
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="4*"></RowDefinition>
-                <RowDefinition Height="8*"></RowDefinition>
+                <RowDefinition Height="10*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
             </Grid.RowDefinitions>
 
 
-            <Button Name="StartButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Play" Click="ButtonPlayClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5 0 0 0" Width="40" Height="40">
+            <Button Name="StartButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Play" Click="ButtonPlayClick" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5 0 0 0" Width="40" Height="40">
                 <Button.Template>
                     <ControlTemplate>
                         <Image Source="/images/play.png"/>
@@ -93,7 +90,7 @@
                 </Button.Template>
             </Button>
 
-            <Button Name="PauseButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Pause" Click="ButtonPauseClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="55 0 0 0" Width="40" Height="40">
+            <Button Name="PauseButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Pause" Click="ButtonPauseClick" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="55 0 0 0" Width="40" Height="40">
                 <Button.Template>
                     <ControlTemplate>
                         <Image Source="/images/pause.png"/>
@@ -101,7 +98,7 @@
                 </Button.Template>
             </Button>
 
-            <Button Name="StopButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Stop" Click="ButtonStopClick" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="105 0 0 0" Width="40" Height="40">
+            <Button Name="StopButton" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Stop" Click="ButtonStopClick" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="105 0 0 0" Width="40" Height="40">
                 <Button.Template>
                     <ControlTemplate>
                         <Image Source="/images/stop.png"/>
@@ -109,28 +106,28 @@
                 </Button.Template>
             </Button>
 
-            <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Foreground="White" Content="Time" FontSize="15"/>
-            <Slider Grid.Row="1" Grid.Column="1" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Bottom" Minimum="100" Maximum="5000" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
-            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txtSliderTime" VerticalAlignment="Bottom" Foreground="White" FontSize="15" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
-
-            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-            BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="3">
-                <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                    <Button Style="{StaticResource Flat}" Grid.Row="0" Grid.Column="4" x:Name="ButtonRandom" FontSize="15" Foreground="Black" Background="White" VerticalAlignment="Center" Click="ButtonRandomClick">Random board</Button>
-                    <Button Style="{StaticResource Flat}" Grid.Row="0" Grid.Column="5" x:Name="ButtonClear"  FontSize="15" Foreground="Black" Background="White" VerticalAlignment="Center" Click="ButtonClearClick">Clear board</Button>
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="0">
+                <StackPanel VerticalAlignment="Center" Margin="0,0,3,0">
+                    <xctk:IntegerUpDown x:Name="IntegerUpDownWidth" Value="10" Maximum="100" Minimum="10" ValueChanged="IntegerUpDownWidthValueChanged" Margin="0,0,0,5"/>
+                    <Button Style="{StaticResource Flat}" x:Name="ButtonRandom" FontSize="12" Foreground="Black" Background="White" VerticalAlignment="Center" Click="ButtonRandomClick">Random board</Button>
+                    <Button Style="{StaticResource Flat}" x:Name="ButtonClear"  FontSize="12" Foreground="Black" Background="White" VerticalAlignment="Center" Click="ButtonClearClick">Clear board</Button>
                  </StackPanel>
             </Border>
 
-            <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="4">
-                <StackPanel VerticalAlignment="Bottom">
-                    <xctk:IntegerUpDown x:Name="IntegerUpDownWidth" Value="10" Maximum="100" Minimum="10" ValueChanged="IntegerUpDownWidthValueChanged"  Margin="0,5,0,5"/>
-                    <xctk:IntegerUpDown x:Name="IntegerUpDownHeight" Value="10" Maximum="100" Minimum="10" ValueChanged="IntegerUpDownHeightValueChanged"  Margin="0,5,0,5"/>
-                    <Button Style="{StaticResource Flat}" x:Name="ButtonSave" FontSize="15" Foreground="Black" Background="White" Click="ButtonSaveClick">Save board</Button>
-                    <Button Style="{StaticResource Flat}" x:Name="ButtonRestore" FontSize="15" Foreground="Black" Background="White" Click="ButtonRestoreClick">Restore board</Button>
+            <Border BorderBrush="Black" BorderThickness="0"  Grid.Row="1" Grid.Column="1">
+                <StackPanel VerticalAlignment="Center" Margin="3,0,0,0">
+                    <xctk:IntegerUpDown x:Name="IntegerUpDownHeight" Value="10" Maximum="100" Minimum="10" ValueChanged="IntegerUpDownHeightValueChanged" Margin="0,0,0,5"/>
+                    <Button Style="{StaticResource Flat}" x:Name="ButtonSave" FontSize="12" Foreground="Black" Background="White" Click="ButtonSaveClick">Save board</Button>
+                    <Button Style="{StaticResource Flat}" x:Name="ButtonRestore" FontSize="12" Foreground="Black" Background="White" Click="ButtonRestoreClick">Restore board</Button>
                 </StackPanel>
             </Border>
 
-            <lvc:CartesianChart Series="{Binding PlotIterationCell}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="2">
+            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Foreground="White" Text="Time" FontSize="15"/>
+            <Slider Grid.Row="2" Grid.Column="0" x:Name="SliderTime" TickFrequency="1" IsSnapToTickEnabled="True" Margin="50,0,0,0" VerticalAlignment="Center" Minimum="100" Maximum="1500" Value="{Binding ElementName=txtSliderTime, Path=Text}" ValueChanged="SliderValueChanged" />
+            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtSliderTime" VerticalAlignment="Center" Foreground="White" FontSize="15" HorizontalAlignment="Left" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <lvc:CartesianChart Series="{Binding PlotIterationCell}" Grid.Row="0" Grid.Column="6" Grid.RowSpan="3">
                 <lvc:CartesianChart.AxisY>
                     <lvc:Axis MinValue="0"></lvc:Axis>
                 </lvc:CartesianChart.AxisY>
