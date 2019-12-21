@@ -118,6 +118,10 @@ namespace GameOfLife
                 {
                     MessageBox.Show("Game is ended");
                     ResetGame();
+                    mw.Dispatcher.Invoke(() =>
+                    {
+                        mw.EnableInterface(true);
+                    });
                 }
                 Thread.Sleep(IterationInterval);
             }
