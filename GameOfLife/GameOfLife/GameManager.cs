@@ -110,12 +110,12 @@ namespace GameOfLife
             {
                 pauseEvent.WaitOne(Timeout.Infinite);
                 
-                mw.AddValueToGraph(Board.NbAliveCells);
+                mw.AddValueToGraph(Board.BoardStatistics.NbAliveCells);
                 HistoValues();
 
                 Board.NextIteration();
 
-                if (Board.isEnd)
+                if (Board.IsEnd)
                 {
                     MessageBox.Show("Game is ended");
                     ResetGame();
@@ -130,7 +130,7 @@ namespace GameOfLife
 
         private void HistoValues()
         {
-            mw.AddValueToHisto(Board.ValuesHisto());
+            //mw.AddValueToHisto(Board.ValuesHisto());
         }
 
         /// <summary>

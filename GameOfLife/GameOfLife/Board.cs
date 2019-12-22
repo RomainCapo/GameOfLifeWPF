@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Xml.Serialization;
+
 
 namespace GameOfLife
 {
 
-    class Board
+    class Board 
     {
-        Cell[,] board;
+        private Cell[,] board;
+        public BoardStatistics BoardStatistics { get; private set; }
 
         /// <summary>
         /// Current number of cell on x
@@ -29,7 +23,7 @@ namespace GameOfLife
         /// <summary>
         /// Indicated if the game is finish
         /// </summary>
-        public bool isEnd { get; private set; }
+        public bool IsEnd { get; private set; }
 
         /// <summary>
         /// maximum number of cell on x (for precompute cell array)
@@ -44,26 +38,7 @@ namespace GameOfLife
         /// <summary>
         /// Get the Number of alive cell on the current board
         /// </summary>
-        public double NbAliveCells
-        {
-            get
-            {
-                double sum = 0;
-
-                for (int i = 0; i < NbCellX; i++)
-                {
-                    for (int j = 0; j < NbCellY; j++)
-                    {
-                        if(board[i, j].IsAlive)
-                        {
-                            sum++;
-                        }
-                    }
-                }
-
-                return sum;
-            }
-        }
+        
 
         Random aleaRand = new Random();
 
@@ -82,38 +57,7 @@ namespace GameOfLife
             MAX_BOARD_SIZE_Y = maxCellY;
             board = new Cell[MAX_BOARD_SIZE_X, MAX_BOARD_SIZE_Y];
             InitBoard();
-        }
-
-        public int MaxAge()
-        {
-            int max = 0;
-            for(int i = 0; i < NbCellX; i++)
-            {
-                for(int j = 0; j < NbCellY; j++)
-                {
-                    if (board[i, j].Age > max)
-                    {
-                        max = board[i, j].Age;
-                    }
-                }
-            }
-
-            return max;
-        }
-
-        public int[] ValuesHisto()
-        {
-            int[] values = new int[MaxAge()];
-
-            for (int i = 0; i < NbCellX; i++)
-            {
-                for (int j = 0; j < NbCellY; j++)
-                {
-                    values[board[i, j].Age]++;
-                }
-            }
-
-            return values;
+            BoardStatistics = new BoardStatistics(this);
         }
 
         /// <summary>
@@ -284,7 +228,7 @@ namespace GameOfLife
         /// </summary>
         public void NextIteration()
         {
-            isEnd = true;
+            IsEnd = true;
             int[,] boardNeighbours = ComputeBoardNeighbours();//get the neighboor array
 
             for (int i = 0; i < NbCellX; i++)
@@ -300,14 +244,14 @@ namespace GameOfLife
                         {
                             board[i, j].IsAlive = false;
                             board[i, j].Age = 0;
-                            isEnd = false;
+                            IsEnd = false;
                         }
 
                         if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
                             board[i, j].Age = 0;
-                            isEnd = false;
+                            IsEnd = false;
                         }
                     }
                     else
@@ -316,11 +260,12 @@ namespace GameOfLife
                         {
                             board[i, j].IsAlive = true;
                             board[i, j].Age++;
-                            isEnd = false;
+                            IsEnd = false;
                         }
                     }
                 }
             }
+            BoardStatistics.IncIteration();
         }
     }
 }
