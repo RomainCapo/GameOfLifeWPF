@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -31,7 +26,15 @@ namespace GameOfLife
 
         private Thread animationThread;
 
-        private bool isPaused = false;
+        /// <summary>
+        /// Indicated if the thread is in pause or not, Allow to reuse the current simulation thread if the game is paused
+        /// </summary>
+        private bool isThreadPaused;
+
+        /// <summary>
+        /// Indicated if the simulation is running or not
+        /// </summary>
+        public bool IsSimulationRun { get; private set; }
         public int IterationInterval { get; set; }
 
         ManualResetEvent pauseEvent = new ManualResetEvent(true);
@@ -45,8 +48,14 @@ namespace GameOfLife
             this.mw = mw;
             InitBoard();
             Board.AleaInit();
+            isThreadPaused = false;
+            IsSimulationRun = false;
 
             IterationInterval = 100;
+
+            Binding binding = new Binding("StatsToString");
+            binding.Source = Board.BoardStatistics;
+            mw.txtStats.SetBinding(TextBlock.TextProperty, binding);
         }
 
         /// <summary>
@@ -96,7 +105,10 @@ namespace GameOfLife
         {
             Pause();
             mw.ClearPlot();
+            mw.EnableInterface(true);
             Board.Clear();
+            Board.BoardStatistics.ResetStatistics();
+            mw.txtStats.Text = "";
         }
 
         /// <summary>
@@ -110,21 +122,25 @@ namespace GameOfLife
             {
                 pauseEvent.WaitOne(Timeout.Infinite);
                 
-                mw.AddValueToGraph(Board.NbAliveCells);
+                //Add value to plots
+                mw.AddValueToGraph(Board.BoardStatistics.NbAliveCells);
+                mw.AddValueToHisto(Board.BoardStatistics.ValuesHisto());
 
                 Board.NextIteration();
 
-                if (Board.isEnd)
-                {
-                    MessageBox.Show("Game is ended");
-                    ResetGame();
+                //Update statistics on GUI on each iteration, allow to update interface from a thread
+                mw.Dispatcher.Invoke(() => mw.txtStats.Text = Board.BoardStatistics.DisplayStatistics());
 
-                    //Allow to update interface from a thread
-                    mw.Dispatcher.Invoke(() =>
-                    {
-                        mw.EnableInterface(true);
+                if (Board.IsEnd)
+                {
+                    IsSimulationRun = false;
+                    //Reset game if game is ended, allow to update interface from a thread
+                    mw.Dispatcher.Invoke(() => {
+                        ResetGame();
+                        MessageBox.Show(mw, "Game is ended", "Simulation info");
                     });
                 }
+
                 Thread.Sleep(IterationInterval);
             }
         }
@@ -134,15 +150,19 @@ namespace GameOfLife
         /// </summary>
         public void Play()
         {
-            if(isPaused == true)
+            if(!IsSimulationRun)
             {
-                pauseEvent.Set();
-                isPaused = false;
-            }
-            else
-            {
-                animationThread = new Thread(ThreadMethod);
-                animationThread.Start();
+                IsSimulationRun = true;
+                if (isThreadPaused)
+                {
+                    pauseEvent.Set();
+                    isThreadPaused = false;
+                }
+                else
+                {
+                    animationThread = new Thread(ThreadMethod);
+                    animationThread.Start();
+                }
             }
         }
 
@@ -152,7 +172,8 @@ namespace GameOfLife
         public void Pause()
         {
             pauseEvent.Reset();
-            isPaused = true;
+            isThreadPaused = true;
+            IsSimulationRun = false;
         }
 
         /// <summary>
@@ -181,7 +202,19 @@ namespace GameOfLife
                 try
                 {
                     var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                    Board.from2dArray((int[,])binaryFormatter.Deserialize(stream));
+                    int[,] savedBoard = (int[,])binaryFormatter.Deserialize(stream);
+
+                    //Set integerUpDown value
+                    mw.IntegerUpDownHeight.Value = savedBoard.GetLength(0);
+                    mw.IntegerUpDownWidth.Value = savedBoard.GetLength(1);
+
+                    Board.from2dArray(savedBoard);
+
+                    //Clear plot and stats
+                    Board.BoardStatistics.ResetStatistics();
+                    mw.txtStats.Text = "";
+                    mw.ClearPlot();
+                    
                 }
                 catch
                 {

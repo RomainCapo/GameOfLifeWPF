@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,7 +15,7 @@ namespace GameOfLife
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private GameManager gm;
 
@@ -23,9 +24,12 @@ namespace GameOfLife
         /// </summary>
         public Button[,] GraphicalBoard { get; set; }
 
-        public SeriesCollection PlotIterationCell { get; private set; }
 
-        private double precedentValueGraph;
+        /// <summary>
+        /// Getter / Setter for edit graph values
+        /// </summary>
+        public SeriesCollection PlotIterationCell { get; private set; }
+        public SeriesCollection AgePyramid { get; private set; }
 
         public MainWindow()
         {
@@ -35,6 +39,29 @@ namespace GameOfLife
 
             UpdateGrid();
             InitPlot();
+            InitHistogramm();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
+        /// <summary>
+        /// Init the histogramm parameter
+        /// </summary>
+        private void InitHistogramm()
+        {
+            AgePyramid = new SeriesCollection
+            {
+                new ColumnSeries
+                {
+                    Title = "Number of Cells : ",
+                    Values = new ChartValues<double> {},
+                    Fill = Brushes.Red
+                }
+            };
         }
 
         /// <summary>
@@ -49,13 +76,11 @@ namespace GameOfLife
                     Title = "Number of Cells : ",
                     Values = new ChartValues<double> {},
                     Stroke = Brushes.Red,
-                    Fill = Brushes.Transparent,
-                    Opacity = 0.5
+                    Fill = Brushes.Transparent
                 }
             };
 
             DataContext = this;
-            precedentValueGraph = 0;
         }
 
         /// <summary>
@@ -98,7 +123,7 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Cell click event. Invert the celle state.
+        /// Cell click event. Invert the cell state.
         /// </summary>
         /// <param name="sender">sender object</param>
         /// <param name="e">event object</param>
@@ -108,6 +133,7 @@ namespace GameOfLife
             int iCol = Grid.GetColumn(currentCell);
             int iRow = Grid.GetRow(currentCell);
             gm.Board[iCol, iRow].IsAlive = !gm.Board[iCol, iRow].IsAlive;
+            gm.Board[iCol, iRow].Age = 0;
         }
 
         /// <summary>
@@ -142,8 +168,11 @@ namespace GameOfLife
         /// <param name="e">event object</param>
         public void ButtonPauseClick(object sender, RoutedEventArgs e)
         {
-            EnableInterface(true);
-            gm.Pause();
+            if(gm.IsSimulationRun)
+            {
+                EnableInterface(true);
+                gm.Pause();
+            }
         }
 
         /// <summary>
@@ -153,8 +182,10 @@ namespace GameOfLife
         /// <param name="e">event object</param>
         public void ButtonStopClick(object sender, RoutedEventArgs e)
         {
-            EnableInterface(true);
-            gm.ResetGame();
+            if(gm.IsSimulationRun)
+            {
+                gm.ResetGame();
+            }
         }
 
         /// <summary>
@@ -163,6 +194,7 @@ namespace GameOfLife
         public void ClearPlot()
         {
             PlotIterationCell[0].Values.Clear();
+            AgePyramid[0].Values.Clear();
         }
 
         /// <summary>
@@ -171,10 +203,20 @@ namespace GameOfLife
         /// <param name="value">double value to add on the plot</param>
         public void AddValueToGraph(double value)
         {
-            if (!value.Equals(precedentValueGraph))
+            PlotIterationCell[0].Values.Add(value);
+        }
+
+        /// <summary>
+        /// Allow to add a value to the histogramm
+        /// </summary>
+        /// <param name="values">int array with values to add on the histogramm</param>
+        public void AddValueToHisto(int[] values)
+        {
+            AgePyramid[0].Values.Clear();
+
+            for (int i = 1; i < values.Length; i++)
             {
-                PlotIterationCell[0].Values.Add(value);
-                precedentValueGraph = value;
+                AgePyramid[0].Values.Add((double)values[i]);
             }
         }
 
@@ -215,7 +257,14 @@ namespace GameOfLife
 
             if(dlg.ShowDialog() == true)
             {
-                gm.RestoreBoard(dlg.FileName);
+                if(Path.GetExtension(dlg.FileName) == ".gol")
+                {
+                    gm.RestoreBoard(dlg.FileName);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("The file muste have .gol extension ! ");
+                }
             }
             
         }
