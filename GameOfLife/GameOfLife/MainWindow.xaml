@@ -136,7 +136,9 @@
             <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtSliderTime" VerticalAlignment="Center" Foreground="White" FontSize="15" HorizontalAlignment="Right" Text="{Binding ElementName=SliderTime, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
 
             <lvc:CartesianChart Series="{Binding AgePyramid}" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="20,5,0,0">
-
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis MinValue="1"></lvc:Axis>
+                </lvc:CartesianChart.AxisX>
             </lvc:CartesianChart>
 
             <lvc:CartesianChart Series="{Binding PlotIterationCell}" Grid.Row="1" Grid.Column="6" Grid.RowSpan="2" Margin="0,5,0,0">
