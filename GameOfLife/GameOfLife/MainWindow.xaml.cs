@@ -23,6 +23,10 @@ namespace GameOfLife
         /// </summary>
         public Button[,] GraphicalBoard { get; set; }
 
+
+        /// <summary>
+        /// Getter / Setter for edit graph values
+        /// </summary>
         public SeriesCollection PlotIterationCell { get; private set; }
         public SeriesCollection AgePyramid { get; private set; }
 
