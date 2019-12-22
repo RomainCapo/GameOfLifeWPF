@@ -28,10 +28,12 @@ namespace GameOfLife
                 if (isAlive)
                 {
                     CellColor = Brushes.White;
+                    Age = 1;
                 }
                 else
                 {
                     CellColor = Brushes.Black;
+                    Age = 0;
                 }   
                 OnPropertyChanged("CellColor");//Update the cell color when cell state is updated
             }

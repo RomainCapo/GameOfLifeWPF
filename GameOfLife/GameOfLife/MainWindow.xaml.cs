@@ -198,7 +198,7 @@ namespace GameOfLife
         {
             AgePyramid[0].Values.Clear();
 
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 1; i < values.Length; i++)
             {
                 AgePyramid[0].Values.Add((double)values[i]);
             }

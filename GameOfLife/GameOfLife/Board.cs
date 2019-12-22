@@ -86,7 +86,7 @@ namespace GameOfLife
 
         public int MaxAge()
         {
-            int max = 50;
+            int max = 0;
             for(int i = 0; i < NbCellX; i++)
             {
                 for(int j = 0; j < NbCellY; j++)
@@ -103,7 +103,7 @@ namespace GameOfLife
 
         public int[] ValuesHisto()
         {
-            int[] values = new int[MaxAge()];
+            int[] values = new int[MaxAge() + 1];
 
             for (int i = 0; i < NbCellX; i++)
             {
@@ -216,9 +216,7 @@ namespace GameOfLife
             {
                 for (int j = 0; j < aleaRand.Next(0, NbCellY); j++)
                 {
-                    rand = aleaRand.Next(0, NbCellY);
-                    board[i, rand].IsAlive = true;
-                    board[i, rand].Age = 1;
+                    board[i, aleaRand.Next(0, NbCellY)].IsAlive = true;
                 }
             }
         }
@@ -299,14 +297,12 @@ namespace GameOfLife
                         if (nbNeighbours < 2)
                         {
                             board[i, j].IsAlive = false;
-                            board[i, j].Age = 0;
                             isEnd = false;
                         }
 
                         if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
-                            board[i, j].Age = 0;
                             isEnd = false;
                         }
                     }
@@ -315,7 +311,6 @@ namespace GameOfLife
                         if (nbNeighbours == 3)
                         {
                             board[i, j].IsAlive = true;
-                            board[i, j].Age++;
                             isEnd = false;
                         }
                     }
