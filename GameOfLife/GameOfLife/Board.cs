@@ -84,6 +84,38 @@ namespace GameOfLife
             InitBoard();
         }
 
+        public int MaxAge()
+        {
+            int max = 0;
+            for(int i = 0; i < NbCellX; i++)
+            {
+                for(int j = 0; j < NbCellY; j++)
+                {
+                    if (board[i, j].Age > max)
+                    {
+                        max = board[i, j].Age;
+                    }
+                }
+            }
+
+            return max;
+        }
+
+        public int[] ValuesHisto()
+        {
+            int[] values = new int[MaxAge()];
+
+            for (int i = 0; i < NbCellX; i++)
+            {
+                for (int j = 0; j < NbCellY; j++)
+                {
+                    values[board[i, j].Age]++;
+                }
+            }
+
+            return values;
+        }
+
         /// <summary>
         /// Indexer for the internal board array
         /// </summary>
@@ -166,6 +198,7 @@ namespace GameOfLife
                 for (int j = 0; j < NbCellY; j++)
                 {
                     board[i, j].IsAlive = false;
+                    board[i, j].Age = 0;
                 }
             }
         }
@@ -177,12 +210,15 @@ namespace GameOfLife
         /// </summary>
         public void AleaInit()
         {
+            int rand;
             Clear();
             for (int i = 0; i < NbCellX; i++)
             {
                 for (int j = 0; j < aleaRand.Next(0, NbCellY); j++)
                 {
-                    board[i, aleaRand.Next(0, NbCellY)].IsAlive = true;
+                    rand = aleaRand.Next(0, NbCellY);
+                    board[i, rand].IsAlive = true;
+                    board[i, rand].Age = 1;
                 }
             }
         }
@@ -258,15 +294,19 @@ namespace GameOfLife
                     int nbNeighbours = boardNeighbours[i, j];
                     if (board[i, j].IsAlive)
                     {
+                        board[i, j].Age++;
+
                         if (nbNeighbours < 2)
                         {
                             board[i, j].IsAlive = false;
+                            board[i, j].Age = 0;
                             isEnd = false;
                         }
 
                         if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
+                            board[i, j].Age = 0;
                             isEnd = false;
                         }
                     }
@@ -275,6 +315,7 @@ namespace GameOfLife
                         if (nbNeighbours == 3)
                         {
                             board[i, j].IsAlive = true;
+                            board[i, j].Age++;
                             isEnd = false;
                         }
                     }

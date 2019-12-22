@@ -13,6 +13,7 @@ namespace GameOfLife
     class Cell : INotifyPropertyChanged
     {
         public SolidColorBrush CellColor { get; private set; }
+        public int Age { get; set; }
 
         private bool isAlive;
         public bool IsAlive
@@ -41,6 +42,7 @@ namespace GameOfLife
         public Cell()
         {
             isAlive = false; //initially the cell is dead
+            Age = 0;
         }
 
         private void OnPropertyChanged(string info)

@@ -24,7 +24,7 @@ namespace GameOfLife
         public Button[,] GraphicalBoard { get; set; }
 
         public SeriesCollection PlotIterationCell { get; private set; }
-        public SeriesCollection YearPyramid { get; private set; }
+        public SeriesCollection AgePyramid { get; private set; }
 
         private double precedentValueGraph;
 
@@ -36,15 +36,20 @@ namespace GameOfLife
 
             UpdateGrid();
             InitPlot();
+            InitHistogramm();
+        }
 
-
-
-            YearPyramid = new SeriesCollection
+        /// <summary>
+        /// Init the histogramm parameter
+        /// </summary>
+        private void InitHistogramm()
+        {
+            AgePyramid = new SeriesCollection
             {
                 new ColumnSeries
                 {
                     Title = "Number of Cells : ",
-                    Values = new ChartValues<double> { 10, 50, 39, 50 },
+                    Values = new ChartValues<double> {},
                     Fill = Brushes.Red
                 }
             };
@@ -120,6 +125,7 @@ namespace GameOfLife
             int iCol = Grid.GetColumn(currentCell);
             int iRow = Grid.GetRow(currentCell);
             gm.Board[iCol, iRow].IsAlive = !gm.Board[iCol, iRow].IsAlive;
+            gm.Board[iCol, iRow].Age = 0;
         }
 
         /// <summary>
@@ -175,6 +181,7 @@ namespace GameOfLife
         public void ClearPlot()
         {
             PlotIterationCell[0].Values.Clear();
+            AgePyramid[0].Values.Clear();
         }
 
         /// <summary>
@@ -187,6 +194,20 @@ namespace GameOfLife
             {
                 PlotIterationCell[0].Values.Add(value);
                 precedentValueGraph = value;
+            }
+        }
+
+        /// <summary>
+        /// Allow to add a value to the histogramm
+        /// </summary>
+        /// <param name="values">int array with values to add on the histogramm</param>
+        public void AddValueToHisto(int[] values)
+        {
+            AgePyramid[0].Values.Clear();
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                AgePyramid[0].Values.Add((double)values[i]);
             }
         }
 

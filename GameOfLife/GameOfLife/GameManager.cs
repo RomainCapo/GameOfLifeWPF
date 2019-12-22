@@ -111,6 +111,7 @@ namespace GameOfLife
                 pauseEvent.WaitOne(Timeout.Infinite);
                 
                 mw.AddValueToGraph(Board.NbAliveCells);
+                HistoValues();
 
                 Board.NextIteration();
 
@@ -121,6 +122,11 @@ namespace GameOfLife
                 }
                 Thread.Sleep(IterationInterval);
             }
+        }
+
+        private void HistoValues()
+        {
+            mw.AddValueToHisto(Board.ValuesHisto());
         }
 
         /// <summary>
