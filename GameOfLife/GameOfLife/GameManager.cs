@@ -97,6 +97,8 @@ namespace GameOfLife
             Pause();
             mw.ClearPlot();
             Board.Clear();
+            Board.BoardStatistics.ResetStatistics();
+            mw.txtStats.Text = "";
         }
 
         /// <summary>
@@ -111,26 +113,26 @@ namespace GameOfLife
                 pauseEvent.WaitOne(Timeout.Infinite);
                 
                 mw.AddValueToGraph(Board.BoardStatistics.NbAliveCells);
-                HistoValues();
+                mw.AddValueToHisto(Board.BoardStatistics.ValuesHisto());
 
                 Board.NextIteration();
+                mw.Dispatcher.Invoke(() =>
+                {
+                    mw.txtStats.Text = Board.BoardStatistics.DisplayStatistics();
+                });
+                
 
                 if (Board.IsEnd)
                 {
                     MessageBox.Show("Game is ended");
-                    ResetGame();
                     mw.Dispatcher.Invoke(() =>
                     {
+                        ResetGame();
                         mw.EnableInterface(true);
                     });
                 }
                 Thread.Sleep(IterationInterval);
             }
-        }
-
-        private void HistoValues()
-        {
-            //mw.AddValueToHisto(Board.ValuesHisto());
         }
 
         /// <summary>

@@ -4,15 +4,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace GameOfLife
 {
-    class BoardStatistics : INotifyPropertyChanged
+    class BoardStatistics
     {
         private Board board;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private int[] histo;
 
         /// <summary>
         /// Number of iteration for the current board
@@ -22,11 +20,11 @@ namespace GameOfLife
         /// <summary>
         /// Number of alive cell in the board
         /// </summary>
-        public double NbAliveCells
+        public int NbAliveCells
         {
             get
             {
-                double sum = 0;
+                int sum = 0;
 
                 for (int i = 0; i < board.NbCellX; i++)
                 {
@@ -66,9 +64,13 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Compute the histogramm for the current board
+        /// </summary>
+        /// <returns>histogramm in int array</returns>
         public int[] ValuesHisto()
         {
-            int[] histo = new int[MaxAge];
+            int[] histo = new int[MaxAge+1];
 
             for (int i = 0; i < board.NbCellX; i++)
             {
@@ -81,49 +83,57 @@ namespace GameOfLife
             return histo;
         }
 
+        
+        private int maxPopulation;
         /// <summary>
-        /// 
+        /// Maximum number of cell in all itearation
         /// </summary>
         public int MaxPopulation
         {
             get
             {
-                int max = int.MinValue;
-                for(int i = 0; i < histo.Length; i++)
+                int nbAliveCells = NbAliveCells;
+                if (nbAliveCells > maxPopulation)
                 {
-                    if(histo[i]>max)
-                    {
-                        max = histo[i];
-                    }
+                    maxPopulation = nbAliveCells;
                 }
-                return max;
+                return maxPopulation;
+            }
+            private set
+            {
+                minPopulation = value;
             }
         }
 
+        private int minPopulation;
+        /// <summary>
+        /// Minimum number of cell in all itearation
+        /// </summary>
         public int MinPopulation
         {
             get
             {
-                int min = int.MaxValue;
-                for (int i = 0; i < histo.Length; i++)
+                int nbAliveCells = NbAliveCells;
+                if (nbAliveCells < minPopulation)
                 {
-                    if (histo[i] < min)
-                    {
-                        min = histo[i];
-                    }
+                    minPopulation = nbAliveCells;
                 }
-                return min;
+                return minPopulation;
+            }
+            private set
+            {
+                minPopulation = value;
             }
         }
 
         /// <summary>
-        /// BoardStatistics Iteration
+        /// BoardStatistics
         /// </summary>
         /// <param name="board">Board object</param>
         public BoardStatistics(Board board)
         {
             this.board = board;
-            NumberIteration = 0;
+            ResetStatistics();
         }
 
         /// <summary>
@@ -132,17 +142,32 @@ namespace GameOfLife
         public void IncIteration()
         {
             NumberIteration++;
+            MinPopulation = int.MaxValue;
         }
 
+        /// <summary>
+        /// Reset all statistics
+        /// </summary>
         public void ResetStatistics()
         {
             NumberIteration = 0;
-
+            MinPopulation = int.MaxValue;
+            MaxPopulation = int.MinValue;
         }
 
-        private void OnPropertyChanged(string info)
+        /// <summary>
+        /// Conacatains all stats and display it to string format
+        /// </summary>
+        /// <returns>statistics in string format</returns>
+        public string DisplayStatistics()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+            string output = "";
+            output += "Oldest cell : " + MaxAge;
+            output += ", Actual pop : " + NbAliveCells;
+            output += ", Min pop : " + MinPopulation;
+            output += ", Max pop : " + MaxPopulation;
+            output += ", Number iterations : " + NumberIteration;
+            return output;
         }
     }
 }

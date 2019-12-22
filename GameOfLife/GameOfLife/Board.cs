@@ -154,15 +154,12 @@ namespace GameOfLife
         /// </summary>
         public void AleaInit()
         {
-            int rand;
             Clear();
             for (int i = 0; i < NbCellX; i++)
             {
                 for (int j = 0; j < aleaRand.Next(0, NbCellY); j++)
                 {
-                    rand = aleaRand.Next(0, NbCellY);
-                    board[i, rand].IsAlive = true;
-                    board[i, rand].Age = 1;
+                    board[i, aleaRand.Next(0, NbCellY)].IsAlive = true;
                 }
             }
         }
@@ -243,14 +240,12 @@ namespace GameOfLife
                         if (nbNeighbours < 2)
                         {
                             board[i, j].IsAlive = false;
-                            board[i, j].Age = 0;
                             IsEnd = false;
                         }
 
                         if (nbNeighbours > 3)
                         {
                             board[i, j].IsAlive = false;
-                            board[i, j].Age = 0;
                             IsEnd = false;
                         }
                     }
@@ -259,7 +254,6 @@ namespace GameOfLife
                         if (nbNeighbours == 3)
                         {
                             board[i, j].IsAlive = true;
-                            board[i, j].Age++;
                             IsEnd = false;
                         }
                     }

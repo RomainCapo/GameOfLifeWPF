@@ -85,6 +85,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Board.cs" />
+    <Compile Include="BoardStatistics.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -26,8 +26,6 @@ namespace GameOfLife
         public SeriesCollection PlotIterationCell { get; private set; }
         public SeriesCollection AgePyramid { get; private set; }
 
-        private double precedentValueGraph;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -72,7 +70,6 @@ namespace GameOfLife
             };
 
             DataContext = this;
-            precedentValueGraph = 0;
         }
 
         /// <summary>
@@ -190,11 +187,7 @@ namespace GameOfLife
         /// <param name="value">double value to add on the plot</param>
         public void AddValueToGraph(double value)
         {
-            if (!value.Equals(precedentValueGraph))
-            {
-                PlotIterationCell[0].Values.Add(value);
-                precedentValueGraph = value;
-            }
+            PlotIterationCell[0].Values.Add(value);
         }
 
         /// <summary>
@@ -205,7 +198,7 @@ namespace GameOfLife
         {
             AgePyramid[0].Values.Clear();
 
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 1; i < values.Length; i++)
             {
                 AgePyramid[0].Values.Add((double)values[i]);
             }
