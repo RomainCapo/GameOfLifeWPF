@@ -84,6 +84,10 @@ namespace GameOfLife
             InitBoard();
         }
 
+        /// <summary>
+        /// Find the oldest cells and return his age
+        /// </summary>
+        /// <returns>int who represents the age of the oldest cell</returns>
         public int MaxAge()
         {
             int max = 0;
@@ -101,6 +105,10 @@ namespace GameOfLife
             return max;
         }
 
+        /// <summary>
+        /// Return an array with number of values for each age
+        /// </summary>
+        /// <returns>array of values with number of cells for each age (age = index of the array)</returns>
         public int[] ValuesHisto()
         {
             int[] values = new int[MaxAge() + 1];
@@ -210,7 +218,6 @@ namespace GameOfLife
         /// </summary>
         public void AleaInit()
         {
-            int rand;
             Clear();
             for (int i = 0; i < NbCellX; i++)
             {
