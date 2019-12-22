@@ -118,6 +118,8 @@ namespace GameOfLife
                 {
                     MessageBox.Show("Game is ended");
                     ResetGame();
+
+                    //Allow to update interface from a thread
                     mw.Dispatcher.Invoke(() =>
                     {
                         mw.EnableInterface(true);
