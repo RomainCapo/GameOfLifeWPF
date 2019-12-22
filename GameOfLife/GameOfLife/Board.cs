@@ -86,7 +86,7 @@ namespace GameOfLife
 
         public int MaxAge()
         {
-            int max = 0;
+            int max = 50;
             for(int i = 0; i < NbCellX; i++)
             {
                 for(int j = 0; j < NbCellY; j++)
