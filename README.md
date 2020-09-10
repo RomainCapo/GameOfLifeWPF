@@ -1,10 +1,12 @@
-# GameOfLifeWPF
+# Game Of Life WPF
 
-TODO :
-* Romain :
-    * Attention quand fin de la partie l'interface n'est pas reactive
+Game of life in C# WPF
 
-* Vincent :
-    * Optimisation du graphe
-    * Refactor interface (Attention très jolie)
-    * Executable
+## Context
+
+Project done during the 3th Bachelor semester in .NET course.
+
+## Team
+
+* Romain Capocasale [@RomainCapo](https://github.com/RomainCapo)
+* Vincent Moulin [@dicksor](https://github.com/dicksor)
